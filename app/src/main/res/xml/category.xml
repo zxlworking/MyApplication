@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    android:key="root_screen">
+
+    <Preference android:title="Version 1.1.6" />
+
+
+    <Preference android:title="地图追随" >
+        <intent
+            android:targetPackage="com.zxl.river.chief"
+            android:targetClass="com.zxl.river.chief.MapFollowActivity" >
+        </intent>
+    </Preference>
+
+
+</PreferenceScreen>
