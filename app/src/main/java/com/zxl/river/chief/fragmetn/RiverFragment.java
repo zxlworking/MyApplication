@@ -177,21 +177,27 @@ public class RiverFragment extends BaseFragment {
 
             if (mOnLocationChangedListener != null && aMapLocation != null && aMapLocation.getErrorCode() == 0) {
                 if(isFirstLoaction){
+                    isFirstLoaction = false;
+
                     float mZoom = mAMap.getCameraPosition().zoom;
                     DebugUtils.d(TAG,"AMapLocationListener::onLocationChanged::mZoom = " + mZoom);
 
-                    isFirstLoaction = false;
                     mHandler.postDelayed(new Runnable() {
                         @Override
                         public void run() {
+                            mOnLocationChangedListener.onLocationChanged(aMapLocation);
+                            //将地图移动到定位点
+                            mAMap.moveCamera(CameraUpdateFactory.changeLatLng(new LatLng(aMapLocation.getLatitude(), aMapLocation.getLongitude())));
                             if(mZoom < DEFAULT_ZOOM_VALUE){
                                 mAMap.moveCamera(CameraUpdateFactory.zoomTo(DEFAULT_ZOOM_VALUE));
-                                mOnLocationChangedListener.onLocationChanged(aMapLocation);
                             }
                         }
                     },500);
+
                 }else{
                     mOnLocationChangedListener.onLocationChanged(aMapLocation);
+                    //将地图移动到定位点
+                    mAMap.moveCamera(CameraUpdateFactory.changeLatLng(new LatLng(aMapLocation.getLatitude(), aMapLocation.getLongitude())));
                 }
 
                 LatLng mCurrentLatLng = new LatLng(aMapLocation.getLatitude(), aMapLocation.getLongitude());
