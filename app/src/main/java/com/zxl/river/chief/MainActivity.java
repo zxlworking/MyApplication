@@ -15,6 +15,7 @@ import android.widget.LinearLayout;
 import com.zxl.river.chief.fragmetn.CountFragment;
 import com.zxl.river.chief.fragmetn.DealFragment;
 import com.zxl.river.chief.fragmetn.MapFollowFragment;
+import com.zxl.river.chief.fragmetn.RiverFragment;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -48,7 +49,7 @@ public class MainActivity extends FragmentActivity {
 
         //setTitle(TITLE_ARRAY[RIVER_INDEX]);
 
-        mFragments.add(new MapFollowFragment());
+        mFragments.add(new RiverFragment());
         mFragments.add(new CountFragment());
         mFragments.add(new DealFragment());
 

@@ -9,7 +9,7 @@ import android.util.Log;
 public class DebugUtils {
     private static final boolean isDebug = true;
 
-    public void d(String tag,String msg){
+    public static void d(String tag,String msg){
         if(isDebug){
             Log.d(tag,msg);
         }

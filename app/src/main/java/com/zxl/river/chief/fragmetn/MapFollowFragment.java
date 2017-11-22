@@ -215,7 +215,6 @@ public class MapFollowFragment extends BaseFragment implements LocationSource,AM
     public void onPause() {
         super.onPause();
         mapView.onPause();
-        deactivate();
     }
 
     /**
@@ -233,6 +232,9 @@ public class MapFollowFragment extends BaseFragment implements LocationSource,AM
     @Override
     public void onDestroy() {
         super.onDestroy();
+
+        deactivate();
+
         mapView.onDestroy();
         if(null != mlocationClient){
             mlocationClient.onDestroy();
