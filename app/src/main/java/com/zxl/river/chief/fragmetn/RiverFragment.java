@@ -6,6 +6,7 @@ import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.amap.api.location.AMapLocation;
@@ -40,7 +41,7 @@ public class RiverFragment extends BaseFragment {
     private AMapLocationClient mAMapLocationClient;
     private AMapLocationClientOption mAMapLocationClientOption;
 
-    private Button mStartPauseRiverBtn;
+    private ImageView mStartPauseRiverImg;
 
     private boolean isStartRiver = false;
     private boolean isFirstLoaction = true;
@@ -60,9 +61,9 @@ public class RiverFragment extends BaseFragment {
         mMapView = (MapView) contentView.findViewById(R.id.map_view);
         mMapView.onCreate(savedInstanceState);
 
-        mStartPauseRiverBtn = (Button) contentView.findViewById(R.id.start_pause_river_btn);
+        mStartPauseRiverImg = (ImageView) contentView.findViewById(R.id.start_pause_river_img);
 
-        mStartPauseRiverBtn.setOnClickListener(mOnClickListener);
+        mStartPauseRiverImg.setOnClickListener(mOnClickListener);
     }
 
     @Override
@@ -100,11 +101,11 @@ public class RiverFragment extends BaseFragment {
         @Override
         public void onClick(View v) {
             switch (v.getId()){
-                case R.id.start_pause_river_btn:
+                case R.id.start_pause_river_img:
                     if(isStartRiver){
                         //停止
                         isStartRiver = false;
-                        mStartPauseRiverBtn.setText("开始");
+                        mStartPauseRiverImg.setImageResource(R.mipmap.ic_start_river);
 
                         mAMapLocationClientOption.setOnceLocation(true);
 
@@ -114,7 +115,7 @@ public class RiverFragment extends BaseFragment {
                     }else{
                         //开始
                         isStartRiver = true;
-                        mStartPauseRiverBtn.setText("停止");
+                        mStartPauseRiverImg.setImageResource(R.mipmap.ic_pause_river);
 
                         mAMapLocationClientOption.setOnceLocation(false);
                         mAMapLocationClientOption.setInterval(DEFAULT_LOOP_UPLOAD_TIME);
@@ -172,14 +173,14 @@ public class RiverFragment extends BaseFragment {
 
     private AMapLocationListener mLocationListener = new AMapLocationListener() {
         @Override
-        public void onLocationChanged(AMapLocation aMapLocation) {
+        public void onLocationChanged(final AMapLocation aMapLocation) {
             DebugUtils.d(TAG,"AMapLocationListener::onLocationChanged");
 
             if (mOnLocationChangedListener != null && aMapLocation != null && aMapLocation.getErrorCode() == 0) {
                 if(isFirstLoaction){
                     isFirstLoaction = false;
 
-                    float mZoom = mAMap.getCameraPosition().zoom;
+                    final float mZoom = mAMap.getCameraPosition().zoom;
                     DebugUtils.d(TAG,"AMapLocationListener::onLocationChanged::mZoom = " + mZoom);
 
                     mHandler.postDelayed(new Runnable() {
