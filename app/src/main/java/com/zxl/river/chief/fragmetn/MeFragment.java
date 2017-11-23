@@ -12,7 +12,7 @@ import com.zxl.river.chief.R;
 public class MeFragment extends BaseFragment {
     @Override
     public int getContentView() {
-        return R.layout.deal_fragment;
+        return R.layout.me_fragment;
     }
 
     @Override

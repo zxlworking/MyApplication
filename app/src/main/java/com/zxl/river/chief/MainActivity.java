@@ -26,7 +26,7 @@ public class MainActivity extends FragmentActivity {
     private static final int COUNT_INDEX = 1;
     private static final int ME_INDEX = 2;
 
-    private static final String[] TITLE_ARRAY = new String[]{"巡河","统计分析","我的待办"};
+    private static final String[] TITLE_ARRAY = new String[]{"巡河","统计","我的"};
 
     private ViewPager mViewPager;
 
@@ -41,10 +41,13 @@ public class MainActivity extends FragmentActivity {
     private ImageView mRiverImg;
     private ImageView mCountImg;
     private ImageView mMeImg;
+    private ImageView mBackImg;
+    private ImageView mSettingsImg;
 
     private TextView mRiverTv;
     private TextView mCountTv;
     private TextView mMeTv;
+    private TextView mTitleTv;
 
     private int mCurrentIndex = RIVER_INDEX;
 
@@ -69,14 +72,18 @@ public class MainActivity extends FragmentActivity {
         mRiverImg = (ImageView) findViewById(R.id.river_img);
         mCountImg = (ImageView) findViewById(R.id.count_img);
         mMeImg = (ImageView) findViewById(R.id.me_img);
+        mBackImg = (ImageView) findViewById(R.id.back_img);
+        mSettingsImg = (ImageView) findViewById(R.id.settings_img);
 
         mRiverTv = (TextView) findViewById(R.id.river_tv);
         mCountTv = (TextView) findViewById(R.id.count_tv);
         mMeTv = (TextView) findViewById(R.id.me_tv);
+        mTitleTv = (TextView) findViewById(R.id.title_tv);
 
         mRiverLl.setOnClickListener(mOnClickListener);
         mCountLl.setOnClickListener(mOnClickListener);
         mMeLl.setOnClickListener(mOnClickListener);
+        mSettingsImg.setOnClickListener(mOnClickListener);
 
         /*
         mViewPager = (ViewPager) findViewById(R.id.view_pager);
@@ -85,6 +92,8 @@ public class MainActivity extends FragmentActivity {
 
         mViewPager.addOnPageChangeListener(mOnPageChangeListener);
         */
+
+        mBackImg.setVisibility(View.GONE);
 
         setTab(RIVER_INDEX);
 
@@ -105,6 +114,8 @@ public class MainActivity extends FragmentActivity {
                 case R.id.me_ll:
                     //mViewPager.setCurrentItem(DEAL_INDEX);
                     setTab(ME_INDEX);
+                    break;
+                case R.id.settings_img:
                     break;
             }
         }
@@ -131,7 +142,7 @@ public class MainActivity extends FragmentActivity {
         mFragmentTransaction.commit();
 
 
-        //setTitle(TITLE_ARRAY[index]);
+        mTitleTv.setText(TITLE_ARRAY[index]);
         switch (index){
             case RIVER_INDEX:
                 mRiverImg.setImageResource(R.mipmap.ic_river_selected);

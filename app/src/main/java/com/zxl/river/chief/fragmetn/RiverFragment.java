@@ -4,11 +4,14 @@ import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Message;
 import android.provider.SyncStateContract;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.amap.api.location.AMapLocation;
@@ -16,6 +19,7 @@ import com.amap.api.location.AMapLocationClient;
 import com.amap.api.location.AMapLocationClientOption;
 import com.amap.api.location.AMapLocationListener;
 import com.amap.api.maps.AMap;
+import com.amap.api.maps.AMapUtils;
 import com.amap.api.maps.CameraUpdateFactory;
 import com.amap.api.maps.LocationSource;
 import com.amap.api.maps.MapView;
@@ -28,6 +32,10 @@ import com.zxl.river.chief.R;
 import com.zxl.river.chief.utils.CommonUtils;
 import com.zxl.river.chief.utils.DebugUtils;
 
+import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 /**
  * Created by uidq0955 on 2017/11/22.
  */
@@ -37,6 +45,9 @@ public class RiverFragment extends BaseFragment {
 
     private static final float DEFAULT_ZOOM_VALUE = 15;
     private static final long DEFAULT_LOOP_UPLOAD_TIME = 2000;
+    private static final long DEFAULT_COUNT_RIVER_TIME_DELAY = 1000;
+
+    private static final int MSG_START_COUNT_RIVER_TIME = 1;
 
     private MapView mMapView;
     private AMap mAMap;
@@ -45,7 +56,16 @@ public class RiverFragment extends BaseFragment {
     private AMapLocationClient mAMapLocationClient;
     private AMapLocationClientOption mAMapLocationClientOption;
 
+    private FrameLayout mStartPauseRiverFl;
+    private FrameLayout mUploadRiverInfoFl;
+    private FrameLayout mUploadEventInfoFl;
+
     private ImageView mStartPauseRiverImg;
+
+    private TextView mRiverTimeTv;
+    private TextView mRiverDistanceTv;
+    private TextView mRiverStartTimeTv;
+    private TextView mRiverEndTimeTv;
 
     private boolean isStartRiver = false;
     private boolean isFirstLoaction = true;
@@ -53,7 +73,32 @@ public class RiverFragment extends BaseFragment {
     //上次的定位点
     private LatLng mLastLatLng;
 
-    private Handler mHandler = new Handler(){};
+    private DecimalFormat mRiverCountFormat = new DecimalFormat("00");
+    private DecimalFormat mRiverDistanceFormat = new DecimalFormat("#0.00");
+    private SimpleDateFormat mRiverTimeFormat = new SimpleDateFormat("HH:mm");
+
+    private long mRiverCountTime = 0;
+    private float mRiverDistance = 0;
+
+    private Handler mHandler = new Handler(){
+        @Override
+        public void handleMessage(Message msg) {
+            switch (msg.what){
+                case MSG_START_COUNT_RIVER_TIME:
+                    mRiverCountTime++;
+
+                    long mHour = mRiverCountTime / 3600;
+                    long mMinute = (mRiverCountTime % 3600) / 60;
+                    long mSecond = (mRiverCountTime % 3600) % 60;
+
+                    //mRiverTimeTv.setText(String.format("%02d", mHour)+":"+String.format("%02d", mMinute)+":"+String.format("%02d", mSecond));
+                    mRiverTimeTv.setText(mRiverCountFormat.format(mHour)+":"+mRiverCountFormat.format(mMinute)+":"+mRiverCountFormat.format(mSecond));
+
+                    this.sendEmptyMessageDelayed(MSG_START_COUNT_RIVER_TIME,DEFAULT_COUNT_RIVER_TIME_DELAY);
+                    break;
+            }
+        }
+    };
 
     @Override
     public int getContentView() {
@@ -65,9 +110,20 @@ public class RiverFragment extends BaseFragment {
         mMapView = (MapView) contentView.findViewById(R.id.map_view);
         mMapView.onCreate(savedInstanceState);
 
+        mStartPauseRiverFl = (FrameLayout) contentView.findViewById(R.id.start_pause_river_fl);
+        mUploadRiverInfoFl = (FrameLayout) contentView.findViewById(R.id.upload_river_info_fl);
+        mUploadEventInfoFl = (FrameLayout) contentView.findViewById(R.id.upload_event_info_fl);
+
         mStartPauseRiverImg = (ImageView) contentView.findViewById(R.id.start_pause_river_img);
 
-        mStartPauseRiverImg.setOnClickListener(mOnClickListener);
+        mRiverTimeTv = (TextView) contentView.findViewById(R.id.river_time_tv);
+        mRiverDistanceTv = (TextView) contentView.findViewById(R.id.river_distance_tv);
+        mRiverStartTimeTv = (TextView) contentView.findViewById(R.id.river_start_time_tv);
+        mRiverEndTimeTv = (TextView) contentView.findViewById(R.id.river_end_time_tv);
+
+        mStartPauseRiverFl.setOnClickListener(mOnClickListener);
+        mUploadRiverInfoFl.setOnClickListener(mOnClickListener);
+        mUploadEventInfoFl.setOnClickListener(mOnClickListener);
     }
 
     @Override
@@ -76,7 +132,7 @@ public class RiverFragment extends BaseFragment {
             mAMap = mMapView.getMap();
         }
         //显示默认定位按钮
-        mAMap.getUiSettings().setMyLocationButtonEnabled(true);
+        //mAMap.getUiSettings().setMyLocationButtonEnabled(true);
         //设置定位监听
         mAMap.setLocationSource(mLocationSource);
 
@@ -105,27 +161,47 @@ public class RiverFragment extends BaseFragment {
         @Override
         public void onClick(View v) {
             switch (v.getId()){
-                case R.id.start_pause_river_img:
+                case R.id.start_pause_river_fl:
+                    DebugUtils.d(TAG,"onClick::start_pause_river_fl::isStartRiver = " + isStartRiver);
                     if(isStartRiver){
                         //停止
                         isStartRiver = false;
                         mStartPauseRiverImg.setImageResource(R.mipmap.ic_start_river);
                         addMark(R.mipmap.ic_map_stop,mLastLatLng);
-                        /*
+
                         mAMapLocationClientOption.setOnceLocation(true);
                         mAMapLocationClient.setLocationOption(mAMapLocationClientOption);
                         mAMapLocationClient.stopLocation();
-                        */
+
+                        mHandler.removeMessages(MSG_START_COUNT_RIVER_TIME);
+                        mRiverEndTimeTv.setText("结束："+mRiverTimeFormat.format(new Date()));
+
                     }else{
                         //开始
                         isStartRiver = true;
+                        mLastLatLng = null;
                         mStartPauseRiverImg.setImageResource(R.mipmap.ic_pause_river);
+
+
+                        mRiverCountTime = 0;
+                        mHandler.removeMessages(MSG_START_COUNT_RIVER_TIME);
+                        mHandler.sendEmptyMessage(MSG_START_COUNT_RIVER_TIME);
+                        mRiverDistance = 0;
+
+                        mRiverStartTimeTv.setText("开始："+mRiverTimeFormat.format(new Date()));
 
                         mAMapLocationClientOption.setOnceLocation(false);
                         mAMapLocationClientOption.setInterval(DEFAULT_LOOP_UPLOAD_TIME);
                         mAMapLocationClient.setLocationOption(mAMapLocationClientOption);
                         mAMapLocationClient.startLocation();
+
                     }
+                    break;
+                case R.id.upload_river_info_fl:
+                    DebugUtils.d(TAG,"onClick::upload_river_info_fl");
+                    break;
+                case R.id.upload_event_info_fl:
+                    DebugUtils.d(TAG,"onClick::upload_event_info_fl");
                     break;
             }
         }
@@ -169,7 +245,6 @@ public class RiverFragment extends BaseFragment {
                 mAMapLocationClient = null;
 
             }
-            mLastLatLng = null;
         }
     };
 
@@ -237,6 +312,9 @@ public class RiverFragment extends BaseFragment {
         mAMap.addPolyline((new PolylineOptions())
                 .add(oldData, newData)
                 .geodesic(true).color(Color.GREEN));
+
+        mRiverDistance = mRiverDistance + Math.abs(AMapUtils.calculateLineDistance(oldData,newData));
+        mRiverDistanceTv.setText(mRiverDistanceFormat.format(mRiverDistance/1000));
     }
 
     private void addMark(int resId,LatLng latLng){
@@ -248,6 +326,7 @@ public class RiverFragment extends BaseFragment {
         markerOption.icon(BitmapDescriptorFactory.fromBitmap(BitmapFactory.decodeResource(getResources(),resId)));
         // 将Marker设置为贴地显示，可以双指下拉地图查看效果
         markerOption.setFlat(true);//设置marker平贴地图效果
+        mAMap.addMarker(markerOption);
     }
 
     @Override
@@ -276,5 +355,7 @@ public class RiverFragment extends BaseFragment {
         if(null != mAMapLocationClient){
             mAMapLocationClient.onDestroy();
         }
+
+        mHandler.removeMessages(MSG_START_COUNT_RIVER_TIME);
     }
 }
