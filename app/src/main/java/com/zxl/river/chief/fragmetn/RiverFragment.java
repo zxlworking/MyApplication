@@ -1,8 +1,10 @@
 package com.zxl.river.chief.fragmetn;
 
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
+import android.provider.SyncStateContract;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -17,7 +19,9 @@ import com.amap.api.maps.AMap;
 import com.amap.api.maps.CameraUpdateFactory;
 import com.amap.api.maps.LocationSource;
 import com.amap.api.maps.MapView;
+import com.amap.api.maps.model.BitmapDescriptorFactory;
 import com.amap.api.maps.model.LatLng;
+import com.amap.api.maps.model.MarkerOptions;
 import com.amap.api.maps.model.MyLocationStyle;
 import com.amap.api.maps.model.PolylineOptions;
 import com.zxl.river.chief.R;
@@ -106,12 +110,12 @@ public class RiverFragment extends BaseFragment {
                         //停止
                         isStartRiver = false;
                         mStartPauseRiverImg.setImageResource(R.mipmap.ic_start_river);
-
+                        addMark(R.mipmap.ic_map_stop,mLastLatLng);
+                        /*
                         mAMapLocationClientOption.setOnceLocation(true);
-
                         mAMapLocationClient.setLocationOption(mAMapLocationClientOption);
-
-                        mAMapLocationClient.startLocation();
+                        mAMapLocationClient.stopLocation();
+                        */
                     }else{
                         //开始
                         isStartRiver = true;
@@ -119,9 +123,7 @@ public class RiverFragment extends BaseFragment {
 
                         mAMapLocationClientOption.setOnceLocation(false);
                         mAMapLocationClientOption.setInterval(DEFAULT_LOOP_UPLOAD_TIME);
-
                         mAMapLocationClient.setLocationOption(mAMapLocationClientOption);
-
                         mAMapLocationClient.startLocation();
                     }
                     break;
@@ -166,8 +168,8 @@ public class RiverFragment extends BaseFragment {
                 mAMapLocationClient.onDestroy();
                 mAMapLocationClient = null;
 
-                mLastLatLng = null;
             }
+            mLastLatLng = null;
         }
     };
 
@@ -203,8 +205,11 @@ public class RiverFragment extends BaseFragment {
 
                 LatLng mCurrentLatLng = new LatLng(aMapLocation.getLatitude(), aMapLocation.getLongitude());
                 if(isStartRiver){
+                    DebugUtils.d(TAG,"AMapLocationListener::onLocationChanged::mLastLatLng = " + mLastLatLng);
                     if(null == mLastLatLng){
                         mLastLatLng = mCurrentLatLng;
+                        mAMap.clear();
+                        addMark(R.mipmap.ic_map_start,mLastLatLng);
                     }else if(mLastLatLng != null && mLastLatLng != mCurrentLatLng){
                         setUpMap( mLastLatLng , mCurrentLatLng );
                         mLastLatLng = mCurrentLatLng;
@@ -224,10 +229,25 @@ public class RiverFragment extends BaseFragment {
      * 绘制两个坐标点之间的线段,从以前位置到现在位置
      */
     private void setUpMap(LatLng oldData,LatLng newData ) {
+        if(null == oldData || !isStartRiver){
+            mLastLatLng = null;
+            return;
+        }
         // 绘制一个大地曲线
         mAMap.addPolyline((new PolylineOptions())
                 .add(oldData, newData)
                 .geodesic(true).color(Color.GREEN));
+    }
+
+    private void addMark(int resId,LatLng latLng){
+        MarkerOptions markerOption = new MarkerOptions();
+        markerOption.position(latLng);
+        //markerOption.title("西安市").snippet("西安市：34.341568, 108.940174");
+
+        markerOption.draggable(true);//设置Marker可拖动
+        markerOption.icon(BitmapDescriptorFactory.fromBitmap(BitmapFactory.decodeResource(getResources(),resId)));
+        // 将Marker设置为贴地显示，可以双指下拉地图查看效果
+        markerOption.setFlat(true);//设置marker平贴地图效果
     }
 
     @Override
