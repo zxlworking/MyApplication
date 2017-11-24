@@ -1,26 +1,26 @@
-package com.zxl.river.chief;
+package com.zxl.river.chief.activity;
 
+import android.app.Fragment;
+import android.app.FragmentTransaction;
+import android.content.Intent;
 import android.graphics.Color;
-import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.zxl.river.chief.R;
 import com.zxl.river.chief.fragmetn.CountFragment;
 import com.zxl.river.chief.fragmetn.MeFragment;
 import com.zxl.river.chief.fragmetn.RiverFragment;
+import com.zxl.river.chief.utils.DebugUtils;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends FragmentActivity {
+public class MainActivity extends BaseActivity {
+    private static final String TAG = "MainActivity";
 
     private static final int RIVER_INDEX = 0;
     private static final int COUNT_INDEX = 1;
@@ -30,7 +30,7 @@ public class MainActivity extends FragmentActivity {
 
     private ViewPager mViewPager;
 
-    private CustomAdapter mCustomAdapter;
+    //private CustomAdapter mCustomAdapter;
 
     private List<Fragment> mFragments = new ArrayList<>();
 
@@ -52,14 +52,12 @@ public class MainActivity extends FragmentActivity {
     private int mCurrentIndex = RIVER_INDEX;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+    public int getContentView() {
+        return R.layout.main_activity;
+    }
 
-        //addPreferencesFromResource(R.xml.category);
-
-        //setTitle(TITLE_ARRAY[RIVER_INDEX]);
-
+    @Override
+    public void initView() {
         mFragments.add(new RiverFragment());
         mFragments.add(new CountFragment());
         mFragments.add(new MeFragment());
@@ -96,8 +94,13 @@ public class MainActivity extends FragmentActivity {
         mBackImg.setVisibility(View.GONE);
 
         setTab(RIVER_INDEX);
+    }
+
+    @Override
+    public void initData() {
 
     }
+
 
     View.OnClickListener mOnClickListener = new View.OnClickListener() {
         @Override
@@ -116,6 +119,9 @@ public class MainActivity extends FragmentActivity {
                     setTab(ME_INDEX);
                     break;
                 case R.id.settings_img:
+                    Intent mSettingsIntent = new Intent(mContext,SettingsActivity.class);
+                    mSettingsIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    startActivity(mSettingsIntent);
                     break;
             }
         }
@@ -123,7 +129,9 @@ public class MainActivity extends FragmentActivity {
 
     private void setTab(int index){
 
-        FragmentTransaction mFragmentTransaction = getSupportFragmentManager().beginTransaction();
+        DebugUtils.d(TAG,"setTab::index = " + index);
+
+        FragmentTransaction mFragmentTransaction = getFragmentManager().beginTransaction();
         for(int i = 0; i < mFragments.size(); i++){
             Fragment mFragment = mFragments.get(i);
             if(i != index){
@@ -171,6 +179,8 @@ public class MainActivity extends FragmentActivity {
         }
     }
 
+
+    /*
     ViewPager.OnPageChangeListener mOnPageChangeListener = new ViewPager.OnPageChangeListener() {
         @Override
         public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
@@ -189,7 +199,9 @@ public class MainActivity extends FragmentActivity {
     };
 
 
-    class CustomAdapter extends FragmentPagerAdapter{
+
+
+    class CustomAdapter extends FragmentPagerAdapter {
 
         public CustomAdapter(FragmentManager fm) {
             super(fm);
@@ -206,5 +218,6 @@ public class MainActivity extends FragmentActivity {
         }
 
     }
+    */
 
 }

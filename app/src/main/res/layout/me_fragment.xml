@@ -60,6 +60,7 @@
             android:background="#ffffff"
             android:orientation="horizontal">
             <LinearLayout
+                android:id="@+id/deal_event_ll"
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:layout_height="match_parent"

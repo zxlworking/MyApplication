@@ -67,6 +67,7 @@ dependencies {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
     compile 'com.android.support:appcompat-v7:25.1.0'
+    compile 'com.android.support:recyclerview-v7:25.1.0'
     testCompile 'junit:junit:4.12'
     compile 'com.facebook.fresco:fresco:1.5.0'
 
@@ -76,4 +77,6 @@ dependencies {
     compile 'com.amap.api:location:latest.integration'
     //搜索功能
     compile 'com.amap.api:search:latest.integration'
+
+    compile 'com.github.PhilJay:MPAndroidChart:v3.0.1'
 }

@@ -1,4 +1,4 @@
-package com.zxl.river.chief;
+package com.zxl.river.chief.activity;
 
 import android.app.Activity;
 import android.graphics.Color;
@@ -19,6 +19,7 @@ import com.amap.api.maps.MapView;
 import com.amap.api.maps.model.LatLng;
 import com.amap.api.maps.model.MyLocationStyle;
 import com.amap.api.maps.model.PolylineOptions;
+import com.zxl.river.chief.R;
 
 /**
  * Created by Administrator on 2016/1/23.

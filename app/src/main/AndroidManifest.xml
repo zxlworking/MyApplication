@@ -28,7 +28,7 @@
             android:value="155f7657e7ad1af7b9957487f0621b09"/>
 
         <activity
-            android:name="com.zxl.river.chief.MainActivity"
+            android:name="com.zxl.river.chief.activity.LoginActivity"
             android:configChanges="orientation|keyboardHidden|screenSize">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -37,7 +37,19 @@
         </activity>
 
         <activity
-            android:name=".MapFollowActivity"
+            android:name=".activity.MainActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"/>
+
+        <activity
+            android:name=".activity.MapFollowActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"/>
+
+        <activity
+            android:name=".activity.SettingsActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"/>
+
+        <activity
+            android:name=".activity.EventListActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"/>
 
 
