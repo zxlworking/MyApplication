@@ -188,7 +188,9 @@ public class RiverFragment extends BaseFragment {
                         mHandler.sendEmptyMessage(MSG_START_COUNT_RIVER_TIME);
                         mRiverDistance = 0;
 
+                        mRiverDistanceTv.setText("0.00");
                         mRiverStartTimeTv.setText("开始："+mRiverTimeFormat.format(new Date()));
+                        mRiverEndTimeTv.setText("结束：00:00");
 
                         mAMapLocationClientOption.setOnceLocation(false);
                         mAMapLocationClientOption.setInterval(DEFAULT_LOOP_UPLOAD_TIME);
