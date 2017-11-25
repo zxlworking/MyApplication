@@ -1,14 +1,12 @@
 package com.zxl.river.chief.fragmetn;
 
+import android.content.Intent;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.provider.SyncStateContract;
-import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -29,6 +27,7 @@ import com.amap.api.maps.model.MarkerOptions;
 import com.amap.api.maps.model.MyLocationStyle;
 import com.amap.api.maps.model.PolylineOptions;
 import com.zxl.river.chief.R;
+import com.zxl.river.chief.activity.UploadEventActivity;
 import com.zxl.river.chief.utils.CommonUtils;
 import com.zxl.river.chief.utils.DebugUtils;
 
@@ -204,6 +203,9 @@ public class RiverFragment extends BaseFragment {
                     break;
                 case R.id.upload_event_info_fl:
                     DebugUtils.d(TAG,"onClick::upload_event_info_fl");
+                    Intent mSettingsIntent = new Intent(mContext,UploadEventActivity.class);
+                    mSettingsIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    startActivity(mSettingsIntent);
                     break;
             }
         }

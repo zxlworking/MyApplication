@@ -79,4 +79,6 @@ dependencies {
     compile 'com.amap.api:search:latest.integration'
 
     compile 'com.github.PhilJay:MPAndroidChart:v3.0.1'
+
+    compile 'com.facebook.fresco:fresco:0.12.0'
 }

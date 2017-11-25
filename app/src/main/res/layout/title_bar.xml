@@ -11,8 +11,8 @@
 
     <ImageView
         android:id="@+id/back_img"
-        android:layout_width="26dp"
-        android:layout_height="26dp"
+        android:layout_width="22dp"
+        android:layout_height="22dp"
         android:layout_marginLeft="18dp"
         android:scaleType="fitCenter"
         android:src="@mipmap/ic_back"/>
@@ -24,7 +24,7 @@
         android:layout_marginLeft="18dp"
         android:text="巡河"
         android:textColor="#000000"
-        android:textSize="18sp"/>
+        android:textSize="16sp"/>
 
     <LinearLayout
         android:layout_width="0dp"
@@ -34,8 +34,8 @@
 
     <ImageView
         android:id="@+id/settings_img"
-        android:layout_width="26dp"
-        android:layout_height="26dp"
+        android:layout_width="22dp"
+        android:layout_height="22dp"
         android:layout_marginRight="18dp"
         android:scaleType="fitCenter"
         android:src="@mipmap/ic_settings"/>
