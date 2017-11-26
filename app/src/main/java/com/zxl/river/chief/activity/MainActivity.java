@@ -1,19 +1,26 @@
 package com.zxl.river.chief.activity;
 
+import android.Manifest;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.view.ViewPager;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.zxl.river.chief.R;
+import com.zxl.river.chief.common.Constants;
 import com.zxl.river.chief.fragmetn.CountFragment;
 import com.zxl.river.chief.fragmetn.MeFragment;
 import com.zxl.river.chief.fragmetn.RiverFragment;
+import com.zxl.river.chief.utils.CommonUtils;
 import com.zxl.river.chief.utils.DebugUtils;
 
 import java.util.ArrayList;
@@ -177,6 +184,26 @@ public class MainActivity extends BaseActivity {
                 mMeTv.setTextColor(Color.parseColor("#199bff"));
                 break;
         }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        DebugUtils.d(TAG,"onRequestPermissionsResult::grantResults = " + grantResults);
+        DebugUtils.d(TAG,"onRequestPermissionsResult::requestCode = " + requestCode);
+        if(grantResults.length<=0){
+            return;
+        }
+        DebugUtils.d(TAG,"onRequestPermissionsResult::grantResults[0] = " + grantResults[0]);
+        if (requestCode == Constants.LOCATION_STATE){
+            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                Intent mGetLocationPermissionIntent = new Intent(Constants.ACTION_GET_LOCATION_PERMISSION);
+                sendBroadcast(mGetLocationPermissionIntent);
+            } else if (grantResults[0] == PackageManager.PERMISSION_DENIED) {
+                CommonUtils.showMessage(mContext, "获取位置权限被禁用");
+            }
+        }
+
     }
 
 

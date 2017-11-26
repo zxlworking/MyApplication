@@ -1,11 +1,19 @@
 package com.zxl.river.chief.fragmetn;
 
+import android.Manifest;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.content.pm.PackageManager;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -28,6 +36,8 @@ import com.amap.api.maps.model.MyLocationStyle;
 import com.amap.api.maps.model.PolylineOptions;
 import com.zxl.river.chief.R;
 import com.zxl.river.chief.activity.UploadEventActivity;
+import com.zxl.river.chief.activity.UploadRiverActivity;
+import com.zxl.river.chief.common.Constants;
 import com.zxl.river.chief.utils.CommonUtils;
 import com.zxl.river.chief.utils.DebugUtils;
 
@@ -78,6 +88,10 @@ public class RiverFragment extends BaseFragment {
 
     private long mRiverCountTime = 0;
     private float mRiverDistance = 0;
+    private long mRiverStartTime = 0;
+    private long mRiverEndTime = 0;
+
+    private RequestLocationPermissionReceiver mRequestLocationPermissionReceiver;
 
     private Handler mHandler = new Handler(){
         @Override
@@ -127,6 +141,11 @@ public class RiverFragment extends BaseFragment {
 
     @Override
     public void initData() {
+
+        mRequestLocationPermissionReceiver = new RequestLocationPermissionReceiver();
+        IntentFilter mIntentFilter = new IntentFilter(Constants.ACTION_GET_LOCATION_PERMISSION);
+        mContext.registerReceiver(mRequestLocationPermissionReceiver,mIntentFilter);
+
         if(null == mAMap){
             mAMap = mMapView.getMap();
         }
@@ -154,6 +173,7 @@ public class RiverFragment extends BaseFragment {
 
         // 缩放级别（zoom）：地图缩放级别范围为【4-20级】，值越大地图越详细
         mAMap.moveCamera(CameraUpdateFactory.zoomTo(DEFAULT_ZOOM_VALUE));
+
     }
 
     private View.OnClickListener mOnClickListener = new View.OnClickListener() {
@@ -173,7 +193,9 @@ public class RiverFragment extends BaseFragment {
                         mAMapLocationClient.stopLocation();
 
                         mHandler.removeMessages(MSG_START_COUNT_RIVER_TIME);
-                        mRiverEndTimeTv.setText("结束："+mRiverTimeFormat.format(new Date()));
+
+                        mRiverEndTime = new Date().getTime();
+                        mRiverEndTimeTv.setText("结束："+mRiverTimeFormat.format(new Date(mRiverEndTime)));
 
                     }else{
                         //开始
@@ -187,8 +209,11 @@ public class RiverFragment extends BaseFragment {
                         mHandler.sendEmptyMessage(MSG_START_COUNT_RIVER_TIME);
                         mRiverDistance = 0;
 
+                        mRiverStartTime = new Date().getTime();
+                        mRiverEndTime = 0;
+
                         mRiverDistanceTv.setText("0.00");
-                        mRiverStartTimeTv.setText("开始："+mRiverTimeFormat.format(new Date()));
+                        mRiverStartTimeTv.setText("开始："+mRiverTimeFormat.format(new Date(mRiverStartTime)));
                         mRiverEndTimeTv.setText("结束：00:00");
 
                         mAMapLocationClientOption.setOnceLocation(false);
@@ -200,12 +225,18 @@ public class RiverFragment extends BaseFragment {
                     break;
                 case R.id.upload_river_info_fl:
                     DebugUtils.d(TAG,"onClick::upload_river_info_fl");
+                    DebugUtils.d(TAG,"onClick::upload_event_info_fl");
+                    Intent mUploadRiverIntent = new Intent(mContext,UploadRiverActivity.class);
+                    mUploadRiverIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    mUploadRiverIntent.putExtra(UploadRiverActivity.EXTRA_RIVER_START_TIME,mRiverStartTime);
+                    mUploadRiverIntent.putExtra(UploadRiverActivity.EXTRA_RIVER_END_TIME,mRiverEndTime);
+                    startActivity(mUploadRiverIntent);
                     break;
                 case R.id.upload_event_info_fl:
                     DebugUtils.d(TAG,"onClick::upload_event_info_fl");
-                    Intent mSettingsIntent = new Intent(mContext,UploadEventActivity.class);
-                    mSettingsIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                    startActivity(mSettingsIntent);
+                    Intent mUploadEventIntent = new Intent(mContext,UploadEventActivity.class);
+                    mUploadEventIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    startActivity(mUploadEventIntent);
                     break;
             }
         }
@@ -300,6 +331,13 @@ public class RiverFragment extends BaseFragment {
                 if(isFirstLoaction){
                     CommonUtils.showMessage(mContext, errText, Toast.LENGTH_SHORT);
                 }
+                if(aMapLocation.getErrorCode() == AMapLocation.ERROR_CODE_FAILURE_LOCATION_PERMISSION){
+                    boolean mPermissionResult = CommonUtils.selfPermissionGranted(Manifest.permission.ACCESS_COARSE_LOCATION, mContext.getApplicationContext());
+                    DebugUtils.d(TAG,"AMapLocationListener::onLocationChanged::mPermissionResult = " + mPermissionResult);
+                    if(!mPermissionResult){
+                        ActivityCompat.requestPermissions(getActivity(),new String[]{Manifest.permission.ACCESS_COARSE_LOCATION},Constants.LOCATION_STATE);
+                    }
+                }
             }
         }
     };
@@ -361,5 +399,23 @@ public class RiverFragment extends BaseFragment {
         }
 
         mHandler.removeMessages(MSG_START_COUNT_RIVER_TIME);
+
+        if(mRequestLocationPermissionReceiver != null){
+            mContext.unregisterReceiver(mRequestLocationPermissionReceiver);
+        }
+    }
+
+    class RequestLocationPermissionReceiver extends BroadcastReceiver{
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String mAction = intent.getAction();
+            DebugUtils.d(TAG,"RequestLocationPermissionReceiver::onReceive::mAction = " + mAction);
+            if(TextUtils.equals(mAction,Constants.ACTION_GET_LOCATION_PERMISSION)){
+                mAMapLocationClientOption.setOnceLocation(true);
+                mAMapLocationClient.setLocationOption(mAMapLocationClientOption);
+                mAMapLocationClient.startLocation();
+            }
+        }
     }
 }

@@ -4,6 +4,7 @@
     package="com.zxl.river.chief">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
@@ -30,7 +31,8 @@
 
         <activity
             android:name="com.zxl.river.chief.activity.LoginActivity"
-            android:configChanges="orientation|keyboardHidden|screenSize">
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -39,24 +41,35 @@
 
         <activity
             android:name=".activity.MainActivity"
-            android:configChanges="orientation|keyboardHidden|screenSize"/>
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:screenOrientation="portrait"/>
 
         <activity
             android:name=".activity.MapFollowActivity"
-            android:configChanges="orientation|keyboardHidden|screenSize"/>
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:screenOrientation="portrait"/>
 
         <activity
             android:name=".activity.SettingsActivity"
-            android:configChanges="orientation|keyboardHidden|screenSize"/>
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:screenOrientation="portrait"/>
 
         <activity
             android:name=".activity.EventListActivity"
-            android:configChanges="orientation|keyboardHidden|screenSize"/>
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:screenOrientation="portrait"/>
 
         <activity
             android:name=".activity.UploadEventActivity"
             android:windowSoftInputMode="stateHidden|stateAlwaysHidden"
-            android:configChanges="orientation|keyboardHidden|screenSize"/>
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:screenOrientation="portrait"/>
+
+        <activity
+            android:name=".activity.UploadRiverActivity"
+            android:windowSoftInputMode="stateHidden|stateAlwaysHidden"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:screenOrientation="portrait"/>
 
 
         <!-- 定位需要的服务 使用2.0的定位需要加上这个 -->

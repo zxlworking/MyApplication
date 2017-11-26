@@ -23,6 +23,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
             android:orientation="vertical"
             android:background="#ffffff">
 
@@ -40,20 +41,56 @@
                 android:paddingLeft="18dp"
                 android:paddingRight="18dp"
                 android:orientation="horizontal"
-                android:gravity="center_vertical"
-                android:visibility="gone">
+                android:gravity="center_vertical">
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="事件时间"
+                    android:text="开始时间"
                     android:textSize="16sp"
                     android:textColor="#000000"/>
                 <TextView
+                    android:id="@+id/river_start_time_tv"
                     android:layout_width="0dp"
                     android:layout_weight="1"
                     android:layout_height="wrap_content"
                     android:gravity="center"
                     android:text="11月20日 18:00"
+                    android:textSize="16sp"
+                    android:textColor="#000000"/>
+                <ImageView
+                    android:layout_width="26dp"
+                    android:layout_height="26dp"
+                    android:scaleType="fitCenter"
+                    android:src="@mipmap/ic_right_arrow"/>
+            </LinearLayout>
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:src="#c4c4c4"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingTop="12dp"
+                android:paddingBottom="12dp"
+                android:paddingLeft="18dp"
+                android:paddingRight="18dp"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="结束时间"
+                    android:textSize="16sp"
+                    android:textColor="#000000"/>
+                <TextView
+                    android:id="@+id/river_end_time_tv"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="11月20日 18:30"
                     android:textSize="16sp"
                     android:textColor="#000000"/>
                 <ImageView
@@ -87,7 +124,7 @@
             </LinearLayout>
 
             <GridView
-                android:id="@+id/event_picture_grid_view"
+                android:id="@+id/river_picture_grid_view"
                 android:layout_width="match_parent"
                 android:layout_height="108dp"
                 android:verticalSpacing="8dp"
@@ -98,43 +135,6 @@
                 android:layout_height="1dp"
                 android:src="#c4c4c4"/>
 
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
-            android:orientation="vertical"
-            android:background="#ffffff">
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:paddingTop="12dp"
-                android:paddingBottom="12dp"
-                android:paddingLeft="18dp"
-                android:paddingRight="18dp"
-                android:orientation="horizontal"
-                android:gravity="center_vertical">
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="处理人员"
-                    android:textSize="16sp"
-                    android:textColor="#000000"/>
-
-            </LinearLayout>
-
-            <GridView
-                android:id="@+id/event_person_grid_view"
-                android:layout_width="match_parent"
-                android:layout_height="96dp"
-                android:verticalSpacing="8dp"
-                android:numColumns="4"/>
-
-            <ImageView
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:src="#c4c4c4"/>
         </LinearLayout>
 
 
@@ -150,7 +150,7 @@
             android:gravity="center"
             android:layout_margin="18dp"
             android:background="@drawable/bg_submit_btn"
-            android:text="上报"
+            android:text="提交"
             android:textSize="16sp"
             android:textColor="#ffffff"/>
     </LinearLayout>

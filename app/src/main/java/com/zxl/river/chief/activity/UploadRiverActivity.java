@@ -2,14 +2,9 @@ package com.zxl.river.chief.activity;
 
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
-import android.graphics.Color;
 import android.net.Uri;
-import android.os.Build;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.v4.content.FileProvider;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,13 +24,13 @@ import com.facebook.imagepipeline.request.ImageRequest;
 import com.facebook.imagepipeline.request.ImageRequestBuilder;
 import com.zxl.river.chief.R;
 import com.zxl.river.chief.common.Constants;
-import com.zxl.river.chief.http.data.EventData;
 import com.zxl.river.chief.utils.CommonUtils;
 import com.zxl.river.chief.utils.DebugUtils;
 import com.zxl.river.chief.utils.PhotoUtils;
 
-import java.io.File;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import static com.zxl.river.chief.utils.PhotoUtils.CAMERA_PERMISSIONS_REQUEST_CODE;
@@ -44,26 +39,29 @@ import static com.zxl.river.chief.utils.PhotoUtils.CODE_GALLERY_REQUEST;
 import static com.zxl.river.chief.utils.PhotoUtils.CODE_RESULT_REQUEST;
 import static com.zxl.river.chief.utils.PhotoUtils.STORAGE_PERMISSIONS_REQUEST_CODE;
 
-
 /**
- * Created by mac on 17-11-24.
+ * Created by mac on 17-11-26.
  */
 
-public class UploadEventActivity extends BaseActivity {
-    private static final String TAG = "UploadEventActivity";
+public class UploadRiverActivity extends BaseActivity {
+    private static final String TAG = "UploadRiverActivity";
+
+    public static final String EXTRA_RIVER_START_TIME = "EXTRA_RIVER_START_TIME";
+    public static final String EXTRA_RIVER_END_TIME = "EXTRA_RIVER_END_TIME";
 
     private ImageView mBackImg;
     private ImageView mSettingsImg;
 
     private TextView mTitleTv;
 
-    private GridView mEventPictureGridView;
-    private EventPictureAdapter mEventPictureAdapter;
-    private List<String> mEventPicturePaths = new ArrayList<>();
+    private TextView mRiverStartTimeTv;
+    private TextView mRiverEndTimeTv;
 
-    private GridView mEventPersonGridView;
-    private EventPersonAdapter mEventPersonAdapter;
-    private List<String> mEventPersonPaths = new ArrayList<>();
+    private SimpleDateFormat mRiverTimeFormat = new SimpleDateFormat("MM月dd日 HH:mm");
+
+    private GridView mRiverPictureGridView;
+    private RiverPictureAdapter mRiverPictureAdapter;
+    private List<String> mRiverPicturePaths = new ArrayList<>();
 
     private LinearLayout mAddPictureTipsLl;
     private TextView mAddPictureFromAlbumTv;
@@ -71,58 +69,53 @@ public class UploadEventActivity extends BaseActivity {
     private TextView mCancelAddPictureTv;
 
     private String mCurrentPhotoPath = "";
-    private String mCurrentCropPhotoPath = "";
-    private int mOutPutX = 480;
-    private int mOutPutY = 480;
 
     @Override
     public int getContentView() {
-        return R.layout.upload_event_activity;
+        return R.layout.upload_river_activity;
     }
 
     @Override
     public void initView() {
-
         mBackImg = (ImageView) findViewById(R.id.back_img);
         mSettingsImg = (ImageView) findViewById(R.id.settings_img);
 
         mTitleTv = (TextView) findViewById(R.id.title_tv);
-
-        mEventPictureGridView = (GridView) findViewById(R.id.event_picture_grid_view);
-        mEventPersonGridView = (GridView) findViewById(R.id.event_person_grid_view);
 
         mAddPictureTipsLl = (LinearLayout) findViewById(R.id.add_picture_tips_ll);
         mAddPictureFromAlbumTv = (TextView) findViewById(R.id.add_picture_from_album_tv);
         mAddPictureFromCameraTv = (TextView) findViewById(R.id.add_picture_from_camera_tv);
         mCancelAddPictureTv = (TextView) findViewById(R.id.cancel_add_picture_tv);
 
+        mRiverPictureGridView = (GridView) findViewById(R.id.river_picture_grid_view);
+
         mSettingsImg.setVisibility(View.GONE);
-        mTitleTv.setText("上报事件");
+        mTitleTv.setText("提交巡河信息");
+
+        mRiverStartTimeTv = (TextView) findViewById(R.id.river_start_time_tv);
+        mRiverEndTimeTv = (TextView) findViewById(R.id.river_end_time_tv);
 
         mBackImg.setOnClickListener(mOnClickListener);
         mAddPictureFromAlbumTv.setOnClickListener(mOnClickListener);
         mAddPictureFromCameraTv.setOnClickListener(mOnClickListener);
         mCancelAddPictureTv.setOnClickListener(mOnClickListener);
+
     }
 
     @Override
     public void initData() {
-        mOutPutX = CommonUtils.getScreenWidth(mContext);
-        mOutPutY = CommonUtils.getScreenHeight(mContext);
+        Bundle mBundle = getIntent().getExtras();
+        long mRiverStartTime = 0;
+        long mRiverEndTime = 0;
+        if(mBundle != null){
+            mRiverStartTime = mBundle.getLong(EXTRA_RIVER_START_TIME);
+            mRiverEndTime = mBundle.getLong(EXTRA_RIVER_END_TIME);
+        }
+        mRiverStartTimeTv.setText(mRiverTimeFormat.format(mRiverStartTime > 0 ? new Date(mRiverStartTime) : new Date()));
+        mRiverEndTimeTv.setText(mRiverTimeFormat.format(mRiverEndTime > 0 ? new Date(mRiverEndTime) : new Date()));
 
-        mEventPictureAdapter = new EventPictureAdapter();
-        mEventPictureGridView.setAdapter(mEventPictureAdapter);
-
-        mEventPersonAdapter = new EventPersonAdapter();
-        mEventPersonGridView.setAdapter(mEventPersonAdapter);
-
-        mEventPersonPaths.add("http://img3.duitang.com/uploads/item/201511/13/20151113110644_PcSFj.thumb.224_0.jpeg");
-        mEventPersonPaths.add("http://diy.qqjay.com/u2/2014/1130/6272576897a2e42385ddbcf41435d938.jpg");
-        mEventPersonPaths.add("http://www.feizl.com/upload2007/2014_01/140116182482507.jpg");
-        mEventPersonPaths.add("http://img2.imgtn.bdimg.com/it/u=3746075707,1914896074&fm=214&gp=0.jpg");
-        mEventPersonPaths.add("http://img3.imgtn.bdimg.com/it/u=2777008330,1289798081&fm=27&gp=0.jpg");
-        mEventPersonAdapter.notifyDataSetChanged();
-
+        mRiverPictureAdapter = new RiverPictureAdapter();
+        mRiverPictureGridView.setAdapter(mRiverPictureAdapter);
     }
 
     private View.OnClickListener mOnClickListener = new View.OnClickListener() {
@@ -152,16 +145,16 @@ public class UploadEventActivity extends BaseActivity {
         }
     };
 
-    class EventPictureAdapter extends BaseAdapter{
+    class RiverPictureAdapter extends BaseAdapter {
 
         @Override
         public int getCount() {
-            return mEventPicturePaths.size()+1;
+            return mRiverPicturePaths.size()+1;
         }
 
         @Override
         public String getItem(int position) {
-            return mEventPicturePaths.get(position);
+            return mRiverPicturePaths.get(position);
         }
 
         @Override
@@ -172,10 +165,10 @@ public class UploadEventActivity extends BaseActivity {
         @Override
         public View getView(final int position, View convertView, ViewGroup parent) {
             if(null == convertView){
-                convertView = LayoutInflater.from(mContext).inflate(R.layout.upload_event_picture_item_view,null);
+                convertView = LayoutInflater.from(mContext).inflate(R.layout.upload_river_picture_item_view,null);
             }
 
-            SimpleDraweeView mSimpleDraweeView = (SimpleDraweeView) convertView.findViewById(R.id.upload_event_picture_item_img);
+            SimpleDraweeView mSimpleDraweeView = (SimpleDraweeView) convertView.findViewById(R.id.upload_river_picture_item_img);
 
             if(position == getCount() - 1){
                 mSimpleDraweeView.setImageResource(R.drawable.ic_add_picture);
@@ -205,7 +198,7 @@ public class UploadEventActivity extends BaseActivity {
                 int mWidth = mSimpleDraweeView.getWidth();
                 int mHeight = mSimpleDraweeView.getHeight();
                 if(mWidth > 0 && mHeight > 0){
-                    Uri mUri = Uri.parse("file://" + mEventPicturePaths.get(position));
+                    Uri mUri = Uri.parse("file://" + mRiverPicturePaths.get(position));
                     ImageRequest request = ImageRequestBuilder.newBuilderWithSource(mUri)
                             .setResizeOptions(new ResizeOptions(mWidth,mHeight))
                             .build();
@@ -224,58 +217,6 @@ public class UploadEventActivity extends BaseActivity {
         }
     }
 
-    class EventPersonAdapter extends BaseAdapter{
-
-        @Override
-        public int getCount() {
-            return mEventPersonPaths.size()+1;
-        }
-
-        @Override
-        public String getItem(int position) {
-            return mEventPersonPaths.get(position);
-        }
-
-        @Override
-        public long getItemId(int position) {
-            return position;
-        }
-
-        @Override
-        public View getView(final int position, View convertView, ViewGroup parent) {
-            if(null == convertView){
-                convertView = LayoutInflater.from(mContext).inflate(R.layout.upload_event_person_item_view,null);
-            }
-
-            SimpleDraweeView mSimpleDraweeView = (SimpleDraweeView) convertView.findViewById(R.id.upload_event_person_item_img);
-
-            if(position == getCount() - 1){
-                mSimpleDraweeView.setImageResource(R.drawable.ic_add_picture);
-                /*
-                mSimpleDraweeView.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        mAddPictureTipsLl.setVisibility(View.VISIBLE);
-                    }
-                });
-                */
-            }else{
-                mSimpleDraweeView.setImageURI(mEventPersonPaths.get(position));
-                /*
-                mSimpleDraweeView.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        mEventPicturePaths.remove(position);
-                        notifyDataSetChanged();
-                    }
-                });
-                */
-            }
-
-            return convertView;
-        }
-    }
-
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
@@ -285,6 +226,7 @@ public class UploadEventActivity extends BaseActivity {
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     if (CommonUtils.hasSdcard()) {
                         generatePhotoPath();
+                        DebugUtils.d(TAG,"onRequestPermissionsResult::CAMERA_PERMISSIONS_REQUEST_CODE::mCurrentPhotoPath = " + mCurrentPhotoPath);
                         PhotoUtils.takePicture(mActivity,mCurrentPhotoPath);
                     }else {
                         CommonUtils.showMessage(mContext, "设备没有SD卡！");
@@ -315,8 +257,8 @@ public class UploadEventActivity extends BaseActivity {
                     if(data != null){
                         DebugUtils.d(TAG,"onActivityResult::CODE_CAMERA_REQUEST::data = " + data.getData());
                     }
-                    mEventPicturePaths.add(0,mCurrentPhotoPath);
-                    mEventPictureAdapter.notifyDataSetChanged();
+                    mRiverPicturePaths.add(0,mCurrentPhotoPath);
+                    mRiverPictureAdapter.notifyDataSetChanged();
                     /*
                     generateCropPhotoPath();
                     PhotoUtils.cropImageUri(this, mCurrentPhotoPath, mCurrentCropPhotoPath, 1, 1, mOutPutX, mOutPutY, CODE_RESULT_REQUEST);
@@ -331,10 +273,9 @@ public class UploadEventActivity extends BaseActivity {
                             String mNewPath = newUri.getPath();
                             DebugUtils.d(TAG,"onActivityResult::CODE_GALLERY_REQUEST::path = " + newUri.getPath());
 
-                            mEventPicturePaths.add(0,mNewPath);
-                            mEventPictureAdapter.notifyDataSetChanged();
+                            mRiverPicturePaths.add(0,mNewPath);
+                            mRiverPictureAdapter.notifyDataSetChanged();
                             /*
-                            generateCropPhotoPath();
                             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N){
                                 newUri = FileProvider.getUriForFile(this, Constants.FILEPROVIDER_AUTHORITIES, new File(newUri.getPath()));
                             }
@@ -354,8 +295,5 @@ public class UploadEventActivity extends BaseActivity {
 
     private void generatePhotoPath(){
         mCurrentPhotoPath = Constants.APP_PHOTO_DIR + System.currentTimeMillis() + ".jpg";
-    }
-    private void generateCropPhotoPath(){
-        mCurrentCropPhotoPath = Constants.APP_PHOTO_DIR + System.currentTimeMillis() + ".jpg";
     }
 }

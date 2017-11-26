@@ -14,7 +14,7 @@
         android:orientation="horizontal"/>
 
     <com.facebook.drawee.view.SimpleDraweeView
-        android:id="@+id/upload_event_picture_item_img"
+        android:id="@+id/upload_river_picture_item_img"
         android:layout_width="60dp"
         android:layout_height="60dp"
         fresco:placeholderImage="@mipmap/ic_launcher"

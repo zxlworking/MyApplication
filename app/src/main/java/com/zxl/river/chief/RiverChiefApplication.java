@@ -3,6 +3,7 @@ package com.zxl.river.chief;
 import android.app.Application;
 
 import com.facebook.drawee.backends.pipeline.Fresco;
+import com.facebook.imagepipeline.core.ImagePipelineConfig;
 import com.zxl.river.chief.utils.FileUtils;
 
 /**
@@ -15,6 +16,12 @@ public class RiverChiefApplication extends Application {
     public void onCreate() {
         super.onCreate();
         FileUtils.init();
-        Fresco.initialize(this);
+
+        ImagePipelineConfig config = ImagePipelineConfig.newBuilder(this)
+                .setDownsampleEnabled(true)
+                .build();
+
+        Fresco.initialize(this, config);
+
     }
 }
