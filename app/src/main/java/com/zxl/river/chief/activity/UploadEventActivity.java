@@ -29,7 +29,6 @@ import com.facebook.imagepipeline.request.ImageRequest;
 import com.facebook.imagepipeline.request.ImageRequestBuilder;
 import com.zxl.river.chief.R;
 import com.zxl.river.chief.common.Constants;
-import com.zxl.river.chief.http.data.EventData;
 import com.zxl.river.chief.utils.CommonUtils;
 import com.zxl.river.chief.utils.DebugUtils;
 import com.zxl.river.chief.utils.PhotoUtils;

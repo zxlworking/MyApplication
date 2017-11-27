@@ -15,6 +15,8 @@ public class Constants {
 
     public static final String FILEPROVIDER_AUTHORITIES = "com.zxl.river.chief";
 
+    public static final String BASE_URL = "https://getman.cn/";
+
     public static final String[] EVENT_TYPE_NAME = new String[]{"地质灾害","违规排污","河道垃圾"};
     public static final String[] EVENT_STATE_NAME = new String[]{"未处理","处理中","已处理"};
 

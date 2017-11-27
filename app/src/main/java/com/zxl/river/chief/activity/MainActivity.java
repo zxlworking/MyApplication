@@ -6,6 +6,8 @@ import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.os.Handler;
+import android.os.HandlerThread;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.view.ViewPager;
@@ -20,11 +22,18 @@ import com.zxl.river.chief.common.Constants;
 import com.zxl.river.chief.fragmetn.CountFragment;
 import com.zxl.river.chief.fragmetn.MeFragment;
 import com.zxl.river.chief.fragmetn.RiverFragment;
+import com.zxl.river.chief.http.HttpUtil;
 import com.zxl.river.chief.utils.CommonUtils;
 import com.zxl.river.chief.utils.DebugUtils;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+
+import okhttp3.ResponseBody;
+import rx.Subscriber;
+import rx.Subscription;
+import rx.internal.util.ObserverSubscriber;
 
 public class MainActivity extends BaseActivity {
     private static final String TAG = "MainActivity";
@@ -105,7 +114,34 @@ public class MainActivity extends BaseActivity {
 
     @Override
     public void initData() {
+        HandlerThread mHandlerThread = new HandlerThread("test");
+        mHandlerThread.start();
+        Subscription test = HttpUtil.test("value1", "value2", new Handler(), new Subscriber<ResponseBody>() {
+            @Override
+            public void onStart() {
+                super.onStart();
+                DebugUtils.d(TAG,"HttpUtil.test::onStart--->"+Thread.currentThread());
+            }
 
+            @Override
+            public void onNext(ResponseBody responseBody) {
+                try {
+                    DebugUtils.d(TAG,"HttpUtil.test::onNext--->"+Thread.currentThread()+"--->"+responseBody.string());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                DebugUtils.d(TAG,"HttpUtil.test::onError--->"+Thread.currentThread()+"--->"+e);
+            }
+
+            @Override
+            public void onCompleted() {
+                DebugUtils.d(TAG,"HttpUtil.test::onCompleted--->"+Thread.currentThread());
+            }
+        });
     }
 
 

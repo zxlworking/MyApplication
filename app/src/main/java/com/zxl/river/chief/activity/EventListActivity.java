@@ -10,7 +10,6 @@ import android.widget.TextView;
 
 import com.zxl.river.chief.R;
 import com.zxl.river.chief.common.Constants;
-import com.zxl.river.chief.http.data.EventData;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,7 +29,7 @@ public class EventListActivity extends BaseActivity {
     private RecyclerView mEventRecyclerView;
     private EventAdapter mEventAdapter;
 
-    private List<EventData> mEventDatas = new ArrayList<>();
+    private List<String> mEventDatas = new ArrayList<>();
 
     @Override
     public int getContentView() {
@@ -60,15 +59,7 @@ public class EventListActivity extends BaseActivity {
     @Override
     public void initData() {
         for(int i = 0; i < 100; i++){
-            EventData mEventData = new EventData();
-            mEventData.setTitle("城区河道综合治理工作情况的回报");
-            mEventData.setUploadEventName("2017.11.20");
-            mEventData.setEventType(i % Constants.EVENT_TYPE_NAME.length);
-            mEventData.setUploadEventName("张延");
-            mEventData.setUploadEventDepartment("六合区委");
-            mEventData.setEventState(i % Constants.EVENT_STATE_NAME.length);
-            mEventData.setDealEventTime("2017-11-21");
-            mEventDatas.add(mEventData);
+            mEventDatas.add("");
         }
         mEventAdapter.notifyDataSetChanged();
     }
