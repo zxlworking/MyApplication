@@ -1,69 +1,130 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <com.amap.api.maps.MapView
-        android:id="@+id/map_view"
+    <FrameLayout
+        android:id="@+id/start_river_content_fl"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        android:visibility="gone">
+
+        <com.amap.api.maps.MapView
+            android:id="@+id/map_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="60dp"
+            android:layout_gravity="right"
+            android:layout_marginRight="4dp"
+            android:orientation="vertical">
+
+            <FrameLayout
+                android:id="@+id/start_pause_river_fl"
+                android:layout_width="44dp"
+                android:layout_height="44dp"
+                android:background="@mipmap/bg_river_function">
+                <ImageView
+                    android:id="@+id/start_pause_river_img"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:scaleType="fitCenter"
+                    android:src="@mipmap/ic_start_river"
+                    android:layout_gravity="center"/>
+            </FrameLayout>
+
+            <FrameLayout
+                android:id="@+id/upload_river_info_fl"
+                android:layout_width="44dp"
+                android:layout_height="44dp"
+                android:layout_marginTop="10dp"
+                android:background="@mipmap/bg_river_function"
+                android:layout_gravity="right">
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:scaleType="fitCenter"
+                    android:src="@mipmap/ic_upload_river_info"
+                    android:layout_gravity="center"/>
+            </FrameLayout>
+
+            <FrameLayout
+                android:id="@+id/upload_event_info_fl"
+                android:layout_width="44dp"
+                android:layout_height="44dp"
+                android:layout_marginTop="10dp"
+                android:background="@mipmap/bg_river_function"
+                android:layout_gravity="right">
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:scaleType="fitCenter"
+                    android:src="@mipmap/ic_upload_event_info"
+                    android:layout_gravity="center"/>
+            </FrameLayout>
+        </LinearLayout>
+
+    </FrameLayout>
 
     <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="60dp"
-        android:layout_gravity="right"
-        android:layout_marginRight="4dp"
+        android:id="@+id/end_river_content_ll"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="12dp"
         android:orientation="vertical">
-
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="8dp"
+            android:background="#dedede"
+            android:orientation="vertical">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="4dp"
+                android:text="2017/11/27"
+                android:textColor="#909090"/>
+            <LinearLayout
+                android:id="@+id/end_river_date_content_ll"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:orientation="horizontal"/>
+        </LinearLayout>
         <FrameLayout
-            android:id="@+id/start_pause_river_fl"
-            android:layout_width="44dp"
-            android:layout_height="44dp"
-            android:background="@mipmap/bg_river_function">
-            <ImageView
-                android:id="@+id/start_pause_river_img"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:scaleType="fitCenter"
-                android:src="@mipmap/ic_start_river"
-                android:layout_gravity="center"/>
-        </FrameLayout>
-
-        <FrameLayout
-            android:id="@+id/upload_river_info_fl"
-            android:layout_width="44dp"
-            android:layout_height="44dp"
-            android:layout_marginTop="10dp"
-            android:background="@mipmap/bg_river_function"
-            android:layout_gravity="right">
-            <ImageView
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:scaleType="fitCenter"
-                android:src="@mipmap/ic_upload_river_info"
-                android:layout_gravity="center"/>
-        </FrameLayout>
-
-        <FrameLayout
-            android:id="@+id/upload_event_info_fl"
-            android:layout_width="44dp"
-            android:layout_height="44dp"
-            android:layout_marginTop="10dp"
-            android:background="@mipmap/bg_river_function"
-            android:layout_gravity="right">
-            <ImageView
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:scaleType="fitCenter"
-                android:src="@mipmap/ic_upload_event_info"
-                android:layout_gravity="center"/>
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:background="#ffffff">
+            <TextView
+                android:id="@+id/start_river_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="6dp"
+                android:layout_gravity="center"
+                android:text="开始巡河"
+                android:background="#199bff"
+                android:textSize="16sp"
+                android:textColor="#ffffff"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="16dp"
+                android:padding="6dp"
+                android:layout_gravity="right|top"
+                android:text="轨迹回放"
+                android:background="#dedede"
+                android:textSize="16sp"
+                android:textColor="#000000"/>
         </FrameLayout>
     </LinearLayout>
-    
+
     <LinearLayout
+        android:id="@+id/rivier_info_content_ll"
         android:layout_width="match_parent"
         android:layout_height="136dp"
         android:orientation="vertical"
@@ -71,7 +132,8 @@
         android:layout_marginLeft="12dp"
         android:layout_marginRight="12dp"
         android:layout_marginBottom="12dp"
-        android:background="@mipmap/bg_river_info">
+        android:background="@mipmap/bg_river_info"
+        android:visibility="gone">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -137,7 +199,7 @@
                 android:textColor="#a4a4a4"
                 android:textSize="18sp"/>
         </LinearLayout>
-        
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="2dp"
@@ -175,4 +237,5 @@
         </LinearLayout>
 
     </LinearLayout>
+
 </FrameLayout>

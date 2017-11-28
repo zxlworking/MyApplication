@@ -38,6 +38,7 @@ import rx.internal.util.ObserverSubscriber;
 public class MainActivity extends BaseActivity {
     private static final String TAG = "MainActivity";
 
+    private static final int DEFAULT_INDEX = -1;
     private static final int RIVER_INDEX = 0;
     private static final int COUNT_INDEX = 1;
     private static final int ME_INDEX = 2;
@@ -65,7 +66,7 @@ public class MainActivity extends BaseActivity {
     private TextView mMeTv;
     private TextView mTitleTv;
 
-    private int mCurrentIndex = RIVER_INDEX;
+    private int mCurrentIndex = DEFAULT_INDEX;
 
     @Override
     public int getContentView() {
@@ -114,7 +115,7 @@ public class MainActivity extends BaseActivity {
 
     @Override
     public void initData() {
-        HandlerThread mHandlerThread = new HandlerThread("test");
+        /*HandlerThread mHandlerThread = new HandlerThread("test");
         mHandlerThread.start();
         Subscription test = HttpUtil.test("value1", "value2", new Handler(), new Subscriber<ResponseBody>() {
             @Override
@@ -141,7 +142,7 @@ public class MainActivity extends BaseActivity {
             public void onCompleted() {
                 DebugUtils.d(TAG,"HttpUtil.test::onCompleted--->"+Thread.currentThread());
             }
-        });
+        });*/
     }
 
 
@@ -173,6 +174,11 @@ public class MainActivity extends BaseActivity {
     private void setTab(int index){
 
         DebugUtils.d(TAG,"setTab::index = " + index);
+        DebugUtils.d(TAG,"setTab::mCurrentIndex = " + mCurrentIndex);
+        if(mCurrentIndex == index){
+            return;
+        }
+        mCurrentIndex = index;
 
         FragmentTransaction mFragmentTransaction = getFragmentManager().beginTransaction();
         for(int i = 0; i < mFragments.size(); i++){

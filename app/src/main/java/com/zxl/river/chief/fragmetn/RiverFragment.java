@@ -14,9 +14,11 @@ import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.text.TextUtils;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -43,6 +45,7 @@ import com.zxl.river.chief.utils.DebugUtils;
 
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 
 /**
@@ -70,6 +73,7 @@ public class RiverFragment extends BaseFragment {
     private FrameLayout mUploadEventInfoFl;
 
     private ImageView mStartPauseRiverImg;
+    private TextView mStartRiverTv;
 
     private TextView mRiverTimeTv;
     private TextView mRiverDistanceTv;
@@ -78,6 +82,11 @@ public class RiverFragment extends BaseFragment {
 
     private boolean isStartRiver = false;
     private boolean isFirstLoaction = true;
+
+    private FrameLayout mStartRiverContentFl;
+    private LinearLayout mEndRiverContentLl;
+    private LinearLayout mEndRiverDateContentLl;
+    private LinearLayout mRiverInfoContentLl;
 
     //上次的定位点
     private LatLng mLastLatLng;
@@ -128,12 +137,19 @@ public class RiverFragment extends BaseFragment {
         mUploadEventInfoFl = (FrameLayout) contentView.findViewById(R.id.upload_event_info_fl);
 
         mStartPauseRiverImg = (ImageView) contentView.findViewById(R.id.start_pause_river_img);
+        mStartRiverTv = (TextView) contentView.findViewById(R.id.start_river_tv);
 
         mRiverTimeTv = (TextView) contentView.findViewById(R.id.river_time_tv);
         mRiverDistanceTv = (TextView) contentView.findViewById(R.id.river_distance_tv);
         mRiverStartTimeTv = (TextView) contentView.findViewById(R.id.river_start_time_tv);
         mRiverEndTimeTv = (TextView) contentView.findViewById(R.id.river_end_time_tv);
 
+        mStartRiverContentFl = (FrameLayout) contentView.findViewById(R.id.start_river_content_fl);
+        mEndRiverContentLl = (LinearLayout) contentView.findViewById(R.id.end_river_content_ll);
+        mEndRiverDateContentLl = (LinearLayout) contentView.findViewById(R.id.end_river_date_content_ll);
+        mRiverInfoContentLl = (LinearLayout) contentView.findViewById(R.id.rivier_info_content_ll);
+
+        mStartRiverTv.setOnClickListener(mOnClickListener);
         mStartPauseRiverFl.setOnClickListener(mOnClickListener);
         mUploadRiverInfoFl.setOnClickListener(mOnClickListener);
         mUploadEventInfoFl.setOnClickListener(mOnClickListener);
@@ -174,12 +190,64 @@ public class RiverFragment extends BaseFragment {
         // 缩放级别（zoom）：地图缩放级别范围为【4-20级】，值越大地图越详细
         mAMap.moveCamera(CameraUpdateFactory.zoomTo(DEFAULT_ZOOM_VALUE));
 
+        for(int i = 0; i < 7; i++){
+            Calendar mCalendar = Calendar.getInstance();
+            mCalendar.add(Calendar.DAY_OF_MONTH,-3 + i);
+            SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            System.out.println("zxl--->date--->"+sf.format(mCalendar.getTime()));
+
+
+            View mDateItemView = LayoutInflater.from(mContext).inflate(R.layout.end_river_date_item_view,null);
+            TextView mEndRiverDateDayTv = (TextView) mDateItemView.findViewById(R.id.end_river_date_day_tv);
+            TextView mEndRiverDateWeekTv = (TextView) mDateItemView.findViewById(R.id.end_river_date_week_tv);
+
+            int day = mCalendar.get(Calendar.DAY_OF_MONTH);
+            mEndRiverDateDayTv.setText(""+day);
+            int week = mCalendar.get(Calendar.DAY_OF_WEEK);
+            if(i == 7/2){
+                mEndRiverDateWeekTv.setText("今天");
+            }else{
+                String weekStr = "";
+                switch (week){
+                    case 1:
+                        weekStr = "周一";
+                        break;
+                    case 2:
+                        weekStr = "周二";
+                        break;
+                    case 3:
+                        weekStr = "周三";
+                        break;
+                    case 4:
+                        weekStr = "周四";
+                        break;
+                    case 5:
+                        weekStr = "周五";
+                        break;
+                    case 6:
+                        weekStr = "周六";
+                        break;
+                    case 7:
+                        weekStr = "周天";
+                        break;
+
+                }
+                mEndRiverDateWeekTv.setText(weekStr);
+            }
+
+            LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.MATCH_PARENT);
+            lp.weight = 1;
+            mDateItemView.setLayoutParams(lp);
+            mEndRiverDateContentLl.addView(mDateItemView);
+        }
+
     }
 
     private View.OnClickListener mOnClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             switch (v.getId()){
+                case R.id.start_river_tv:
                 case R.id.start_pause_river_fl:
                     DebugUtils.d(TAG,"onClick::start_pause_river_fl::isStartRiver = " + isStartRiver);
                     if(isStartRiver){
@@ -196,6 +264,9 @@ public class RiverFragment extends BaseFragment {
 
                         mRiverEndTime = new Date().getTime();
                         mRiverEndTimeTv.setText("结束："+mRiverTimeFormat.format(new Date(mRiverEndTime)));
+
+                        mEndRiverContentLl.setVisibility(View.VISIBLE);
+                        mStartRiverContentFl.setVisibility(View.GONE);
 
                     }else{
                         //开始
@@ -220,6 +291,11 @@ public class RiverFragment extends BaseFragment {
                         mAMapLocationClientOption.setInterval(DEFAULT_LOOP_UPLOAD_TIME);
                         mAMapLocationClient.setLocationOption(mAMapLocationClientOption);
                         mAMapLocationClient.startLocation();
+
+                        mRiverInfoContentLl.setVisibility(View.VISIBLE);
+
+                        mEndRiverContentLl.setVisibility(View.GONE);
+                        mStartRiverContentFl.setVisibility(View.VISIBLE);
 
                     }
                     break;
