@@ -193,8 +193,6 @@ public class RiverFragment extends BaseFragment {
         for(int i = 0; i < 7; i++){
             Calendar mCalendar = Calendar.getInstance();
             mCalendar.add(Calendar.DAY_OF_MONTH,-3 + i);
-            SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-            System.out.println("zxl--->date--->"+sf.format(mCalendar.getTime()));
 
 
             View mDateItemView = LayoutInflater.from(mContext).inflate(R.layout.end_river_date_item_view,null);
@@ -205,6 +203,8 @@ public class RiverFragment extends BaseFragment {
             mEndRiverDateDayTv.setText(""+day);
             int week = mCalendar.get(Calendar.DAY_OF_WEEK);
             if(i == 7/2){
+                mEndRiverDateDayTv.setBackgroundResource(R.mipmap.bg_end_river_date_today);
+                mEndRiverDateWeekTv.setTextColor(Color.parseColor("#2b9fff"));
                 mEndRiverDateWeekTv.setText("今天");
             }else{
                 String weekStr = "";
@@ -405,7 +405,7 @@ public class RiverFragment extends BaseFragment {
                 String errText = "定位失败," + aMapLocation.getErrorCode()+ ": " + aMapLocation.getErrorInfo();
                 DebugUtils.d(TAG,"AMapLocationListener::onLocationChanged::errText = " + errText);
                 if(isFirstLoaction){
-                    CommonUtils.showMessage(mContext, errText, Toast.LENGTH_SHORT);
+                    //CommonUtils.showMessage(mContext, errText, Toast.LENGTH_SHORT);
                 }
                 if(aMapLocation.getErrorCode() == AMapLocation.ERROR_CODE_FAILURE_LOCATION_PERMISSION){
                     boolean mPermissionResult = CommonUtils.selfPermissionGranted(Manifest.permission.ACCESS_COARSE_LOCATION, mContext.getApplicationContext());
