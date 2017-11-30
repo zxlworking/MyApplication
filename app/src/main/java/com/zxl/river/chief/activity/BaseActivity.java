@@ -4,7 +4,11 @@ import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.view.View;
+import android.widget.ImageView;
+import android.widget.TextView;
 
+import com.zxl.river.chief.R;
 import com.zxl.river.chief.utils.ActivityManager;
 
 /**
@@ -16,6 +20,13 @@ public abstract class BaseActivity extends Activity {
     public Context mContext;
 
     public Activity mActivity;
+
+    private TextView mTitleTv;
+
+    private ImageView mBackImg;
+    private ImageView mSettingsImg;
+
+    public View.OnClickListener mOnClickListener = null;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -39,6 +50,37 @@ public abstract class BaseActivity extends Activity {
     }
 
     public abstract int getContentView();
-    public abstract void initView();
-    public abstract void initData();
+
+    public void initView(){
+        mTitleTv = (TextView) findViewById(R.id.title_tv);
+        mBackImg = (ImageView) findViewById(R.id.back_img);
+        mSettingsImg = (ImageView) findViewById(R.id.settings_img);
+
+    }
+    public void initData(){
+        if(mBackImg != null){
+            mBackImg.setOnClickListener(mOnClickListener);
+        }
+        if(mSettingsImg != null){
+            mSettingsImg.setOnClickListener(mOnClickListener);
+        }
+    }
+
+    public void setTitle(String title){
+        if(mTitleTv != null){
+            mTitleTv.setText(title);
+        }
+    }
+
+    public void setBackImgVisibility(int v){
+        if(mBackImg != null){
+            mBackImg.setVisibility(v);
+        }
+    }
+
+    public void setSettingsImgVisibility(int v){
+        if(mSettingsImg != null){
+            mSettingsImg.setVisibility(v);
+        }
+    }
 }

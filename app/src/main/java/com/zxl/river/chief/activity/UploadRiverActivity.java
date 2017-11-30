@@ -49,11 +49,6 @@ public class UploadRiverActivity extends BaseActivity {
     public static final String EXTRA_RIVER_START_TIME = "EXTRA_RIVER_START_TIME";
     public static final String EXTRA_RIVER_END_TIME = "EXTRA_RIVER_END_TIME";
 
-    private ImageView mBackImg;
-    private ImageView mSettingsImg;
-
-    private TextView mTitleTv;
-
     private TextView mRiverStartTimeTv;
     private TextView mRiverEndTimeTv;
 
@@ -77,11 +72,7 @@ public class UploadRiverActivity extends BaseActivity {
 
     @Override
     public void initView() {
-        mBackImg = (ImageView) findViewById(R.id.back_img);
-        mSettingsImg = (ImageView) findViewById(R.id.settings_img);
-
-        mTitleTv = (TextView) findViewById(R.id.title_tv);
-
+        super.initView();
         mAddPictureTipsLl = (LinearLayout) findViewById(R.id.add_picture_tips_ll);
         mAddPictureFromAlbumTv = (TextView) findViewById(R.id.add_picture_from_album_tv);
         mAddPictureFromCameraTv = (TextView) findViewById(R.id.add_picture_from_camera_tv);
@@ -89,13 +80,39 @@ public class UploadRiverActivity extends BaseActivity {
 
         mRiverPictureGridView = (GridView) findViewById(R.id.river_picture_grid_view);
 
-        mSettingsImg.setVisibility(View.GONE);
-        mTitleTv.setText("提交巡河信息");
+        setSettingsImgVisibility(View.GONE);
+        setTitle("提交巡河信息");
 
         mRiverStartTimeTv = (TextView) findViewById(R.id.river_start_time_tv);
         mRiverEndTimeTv = (TextView) findViewById(R.id.river_end_time_tv);
 
-        mBackImg.setOnClickListener(mOnClickListener);
+        mOnClickListener = new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                switch (v.getId()){
+                    case R.id.back_img:
+                        finish();
+                        break;
+                    case R.id.add_picture_from_album_tv:
+                        if(CommonUtils.checkStoragePermission(mActivity)){
+                            PhotoUtils.openPic(mActivity,CODE_GALLERY_REQUEST);
+                        }
+                        mAddPictureTipsLl.setVisibility(View.GONE);
+                        break;
+                    case R.id.add_picture_from_camera_tv:
+                        if(PhotoUtils.checkCameraPermission(mActivity)){
+                            generatePhotoPath();
+                            PhotoUtils.takePicture(mActivity,mCurrentPhotoPath);
+                        }
+                        mAddPictureTipsLl.setVisibility(View.GONE);
+                        break;
+                    case R.id.cancel_add_picture_tv:
+                        mAddPictureTipsLl.setVisibility(View.GONE);
+                        break;
+                }
+            }
+        };
+
         mAddPictureFromAlbumTv.setOnClickListener(mOnClickListener);
         mAddPictureFromCameraTv.setOnClickListener(mOnClickListener);
         mCancelAddPictureTv.setOnClickListener(mOnClickListener);
@@ -104,6 +121,7 @@ public class UploadRiverActivity extends BaseActivity {
 
     @Override
     public void initData() {
+        super.initData();
         Bundle mBundle = getIntent().getExtras();
         long mRiverStartTime = 0;
         long mRiverEndTime = 0;
@@ -118,32 +136,6 @@ public class UploadRiverActivity extends BaseActivity {
         mRiverPictureGridView.setAdapter(mRiverPictureAdapter);
     }
 
-    private View.OnClickListener mOnClickListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            switch (v.getId()){
-                case R.id.back_img:
-                    finish();
-                    break;
-                case R.id.add_picture_from_album_tv:
-                    if(CommonUtils.checkStoragePermission(mActivity)){
-                        PhotoUtils.openPic(mActivity,CODE_GALLERY_REQUEST);
-                    }
-                    mAddPictureTipsLl.setVisibility(View.GONE);
-                    break;
-                case R.id.add_picture_from_camera_tv:
-                    if(PhotoUtils.checkCameraPermission(mActivity)){
-                        generatePhotoPath();
-                        PhotoUtils.takePicture(mActivity,mCurrentPhotoPath);
-                    }
-                    mAddPictureTipsLl.setVisibility(View.GONE);
-                    break;
-                case R.id.cancel_add_picture_tv:
-                    mAddPictureTipsLl.setVisibility(View.GONE);
-                    break;
-            }
-        }
-    };
 
     class RiverPictureAdapter extends BaseAdapter {
 

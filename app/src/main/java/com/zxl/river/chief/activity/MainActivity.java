@@ -64,15 +64,13 @@ public class MainActivity extends BaseActivity {
     private ImageView mCountImg;
     private ImageView mNotificationImg;
     private ImageView mMainSettingsImg;
-    private ImageView mBackImg;
-    private ImageView mSettingsImg;
+
 
     private TextView mRiverTv;
     private TextView mEventTv;
     private TextView mCountTv;
     private TextView mNotificationTv;
     private TextView mSettingsTv;
-    private TextView mTitleTv;
 
     private int mCurrentIndex = DEFAULT_INDEX;
 
@@ -83,6 +81,7 @@ public class MainActivity extends BaseActivity {
 
     @Override
     public void initView() {
+        super.initView();
         mFragments.add(new RiverFragment());
         mFragments.add(new MeFragment());
         mFragments.add(new CountFragment());
@@ -101,22 +100,14 @@ public class MainActivity extends BaseActivity {
         mCountImg = (ImageView) findViewById(R.id.count_img);
         mNotificationImg = (ImageView) findViewById(R.id.notification_img);
         mMainSettingsImg = (ImageView) findViewById(R.id.main_settings_img);
-        mBackImg = (ImageView) findViewById(R.id.back_img);
-        mSettingsImg = (ImageView) findViewById(R.id.settings_img);
+
 
         mRiverTv = (TextView) findViewById(R.id.river_tv);
         mEventTv = (TextView) findViewById(R.id.event_tv);
         mCountTv = (TextView) findViewById(R.id.count_tv);
         mNotificationTv = (TextView) findViewById(R.id.notification_tv);
         mSettingsTv = (TextView) findViewById(R.id.settings_tv);
-        mTitleTv = (TextView) findViewById(R.id.title_tv);
 
-        mRiverLl.setOnClickListener(mOnClickListener);
-        mEventLl.setOnClickListener(mOnClickListener);
-        mCountLl.setOnClickListener(mOnClickListener);
-        mNotificationLl.setOnClickListener(mOnClickListener);
-        mSettingsLl.setOnClickListener(mOnClickListener);
-        mSettingsImg.setOnClickListener(mOnClickListener);
 
         /*
         mViewPager = (ViewPager) findViewById(R.id.view_pager);
@@ -126,13 +117,48 @@ public class MainActivity extends BaseActivity {
         mViewPager.addOnPageChangeListener(mOnPageChangeListener);
         */
 
-        mBackImg.setVisibility(View.GONE);
+        setBackImgVisibility(View.GONE);
 
         setTab(RIVER_INDEX);
+
+        mOnClickListener = new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                switch (v.getId()){
+                    case R.id.river_ll:
+                        setTab(RIVER_INDEX);
+                        break;
+                    case R.id.event_ll:
+                        setTab(EVENT_INDEX);
+                        break;
+                    case R.id.count_ll:
+                        setTab(COUNT_INDEX);
+                        break;
+                    case R.id.notification_ll:
+                        setTab(NOTIFICATION_INDEX);
+                        break;
+                    case R.id.settings_ll:
+                        setTab(SETTINGS_INDEX);
+                        break;
+                    case R.id.settings_img:
+                        Intent mSettingsIntent = new Intent(mContext,SettingsActivity.class);
+                        mSettingsIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        startActivity(mSettingsIntent);
+                        break;
+                }
+            }
+        };
+
+        mRiverLl.setOnClickListener(mOnClickListener);
+        mEventLl.setOnClickListener(mOnClickListener);
+        mCountLl.setOnClickListener(mOnClickListener);
+        mNotificationLl.setOnClickListener(mOnClickListener);
+        mSettingsLl.setOnClickListener(mOnClickListener);
     }
 
     @Override
     public void initData() {
+        super.initData();
         /*HandlerThread mHandlerThread = new HandlerThread("test");
         mHandlerThread.start();
         Subscription test = HttpUtil.test("value1", "value2", new Handler(), new Subscriber<ResponseBody>() {
@@ -163,34 +189,6 @@ public class MainActivity extends BaseActivity {
         });*/
     }
 
-
-    View.OnClickListener mOnClickListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            switch (v.getId()){
-                case R.id.river_ll:
-                    setTab(RIVER_INDEX);
-                    break;
-                case R.id.event_ll:
-                    setTab(EVENT_INDEX);
-                    break;
-                case R.id.count_ll:
-                    setTab(COUNT_INDEX);
-                    break;
-                case R.id.notification_ll:
-                    setTab(NOTIFICATION_INDEX);
-                    break;
-                case R.id.settings_ll:
-                    setTab(SETTINGS_INDEX);
-                    break;
-                case R.id.settings_img:
-                    Intent mSettingsIntent = new Intent(mContext,SettingsActivity.class);
-                    mSettingsIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                    startActivity(mSettingsIntent);
-                    break;
-            }
-        }
-    };
 
     private void setTab(int index){
 
@@ -227,11 +225,11 @@ public class MainActivity extends BaseActivity {
         mCountTv.setTextColor(index != COUNT_INDEX ? Color.parseColor("#909090") : Color.parseColor("#199bff"));
         mNotificationImg.setImageResource(index != NOTIFICATION_INDEX ? R.mipmap.ic_notification_normal : R.mipmap.ic_notification_selected);
         mNotificationTv.setTextColor(index != NOTIFICATION_INDEX ? Color.parseColor("#909090") : Color.parseColor("#199bff"));
-        mSettingsImg.setImageResource(index != SETTINGS_INDEX ? R.mipmap.ic_settings_normal : R.mipmap.ic_settings_selected);
+        mMainSettingsImg.setImageResource(index != SETTINGS_INDEX ? R.mipmap.ic_settings_normal : R.mipmap.ic_settings_selected);
         mSettingsTv.setTextColor(index != SETTINGS_INDEX ? Color.parseColor("#909090") : Color.parseColor("#199bff"));
 
 
-        mTitleTv.setText(TITLE_ARRAY[index]);
+        setTitle(TITLE_ARRAY[index]);
 
     }
 

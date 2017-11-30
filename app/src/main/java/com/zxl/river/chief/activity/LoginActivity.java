@@ -32,6 +32,7 @@ public class LoginActivity extends BaseActivity {
 
     @Override
     public void initView() {
+        super.initView();
         mUserNameEt = (EditText) findViewById(R.id.user_name_et);
         mPassWordEt = (EditText) findViewById(R.id.pass_word_et);
 
@@ -49,7 +50,7 @@ public class LoginActivity extends BaseActivity {
 
     @Override
     public void initData() {
-
+        super.initData();
     }
 
     private View.OnClickListener mOnClickListener = new View.OnClickListener() {

@@ -29,11 +29,13 @@ public class CountFragment extends BaseFragment {
 
     @Override
     public void initView(View contentView, Bundle savedInstanceState) {
+        super.initView(contentView,savedInstanceState);
         lineChart = (LineChart)contentView.findViewById(R.id.lineChart);
     }
 
     @Override
     public void initData() {
+        super.initData();
         xAxisValues = new ArrayList<>();
         List<Float> yAxisValues1 = new ArrayList<>();
         List<Float> yAxisValues2 = new ArrayList<>();

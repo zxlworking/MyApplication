@@ -10,9 +10,13 @@ import android.widget.TextView;
 
 import com.zxl.river.chief.R;
 import com.zxl.river.chief.common.Constants;
+import com.zxl.river.chief.utils.CommonUtils;
+import com.zxl.river.chief.utils.PhotoUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.zxl.river.chief.utils.PhotoUtils.CODE_GALLERY_REQUEST;
 
 
 /**
@@ -20,11 +24,6 @@ import java.util.List;
  */
 
 public class EventListActivity extends BaseActivity {
-
-    private ImageView mBackImg;
-    private ImageView mSettingsImg;
-
-    private TextView mTitleTv;
 
     private RecyclerView mEventRecyclerView;
     private EventAdapter mEventAdapter;
@@ -38,42 +37,36 @@ public class EventListActivity extends BaseActivity {
 
     @Override
     public void initView() {
-
-        mBackImg = (ImageView) findViewById(R.id.back_img);
-        mSettingsImg = (ImageView) findViewById(R.id.settings_img);
-
-        mTitleTv = (TextView) findViewById(R.id.title_tv);
-
+        super.initView();
         mEventRecyclerView = (RecyclerView) findViewById(R.id.event_recycler_view);
 
-        mSettingsImg.setVisibility(View.GONE);
-        mTitleTv.setText("事件列表");
-
-        mBackImg.setOnClickListener(mOnClickListener);
+        setSettingsImgVisibility(View.GONE);
+        setTitle("事件列表");
 
         mEventRecyclerView.setLayoutManager(new LinearLayoutManager(mContext));
         mEventAdapter = new EventAdapter();
         mEventRecyclerView.setAdapter(mEventAdapter);
+
+        mOnClickListener = new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                switch (v.getId()){
+                    case R.id.back_img:
+                        finish();
+                        break;
+                }
+            }
+        };
     }
 
     @Override
     public void initData() {
+        super.initData();
         for(int i = 0; i < 100; i++){
             mEventDatas.add("");
         }
         mEventAdapter.notifyDataSetChanged();
     }
-
-    private View.OnClickListener mOnClickListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            switch (v.getId()){
-                case R.id.back_img:
-                    finish();
-                    break;
-            }
-        }
-    };
 
     class EventAdapter extends RecyclerView.Adapter<EventViewHolder>{
 

@@ -51,11 +51,6 @@ import static com.zxl.river.chief.utils.PhotoUtils.STORAGE_PERMISSIONS_REQUEST_C
 public class UploadEventActivity extends BaseActivity {
     private static final String TAG = "UploadEventActivity";
 
-    private ImageView mBackImg;
-    private ImageView mSettingsImg;
-
-    private TextView mTitleTv;
-
     private GridView mEventPictureGridView;
     private EventPictureAdapter mEventPictureAdapter;
     private List<String> mEventPicturePaths = new ArrayList<>();
@@ -81,12 +76,7 @@ public class UploadEventActivity extends BaseActivity {
 
     @Override
     public void initView() {
-
-        mBackImg = (ImageView) findViewById(R.id.back_img);
-        mSettingsImg = (ImageView) findViewById(R.id.settings_img);
-
-        mTitleTv = (TextView) findViewById(R.id.title_tv);
-
+        super.initView();
         mEventPictureGridView = (GridView) findViewById(R.id.event_picture_grid_view);
         mEventPersonGridView = (GridView) findViewById(R.id.event_person_grid_view);
 
@@ -95,10 +85,36 @@ public class UploadEventActivity extends BaseActivity {
         mAddPictureFromCameraTv = (TextView) findViewById(R.id.add_picture_from_camera_tv);
         mCancelAddPictureTv = (TextView) findViewById(R.id.cancel_add_picture_tv);
 
-        mSettingsImg.setVisibility(View.GONE);
-        mTitleTv.setText("上报事件");
+        setSettingsImgVisibility(View.GONE);
+        setTitle("上报事件");
 
-        mBackImg.setOnClickListener(mOnClickListener);
+        mOnClickListener = new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                switch (v.getId()){
+                    case R.id.back_img:
+                        finish();
+                        break;
+                    case R.id.add_picture_from_album_tv:
+                        if(CommonUtils.checkStoragePermission(mActivity)){
+                            PhotoUtils.openPic(mActivity,CODE_GALLERY_REQUEST);
+                        }
+                        mAddPictureTipsLl.setVisibility(View.GONE);
+                        break;
+                    case R.id.add_picture_from_camera_tv:
+                        if(PhotoUtils.checkCameraPermission(mActivity)){
+                            generatePhotoPath();
+                            PhotoUtils.takePicture(mActivity,mCurrentPhotoPath);
+                        }
+                        mAddPictureTipsLl.setVisibility(View.GONE);
+                        break;
+                    case R.id.cancel_add_picture_tv:
+                        mAddPictureTipsLl.setVisibility(View.GONE);
+                        break;
+                }
+            }
+        };
+
         mAddPictureFromAlbumTv.setOnClickListener(mOnClickListener);
         mAddPictureFromCameraTv.setOnClickListener(mOnClickListener);
         mCancelAddPictureTv.setOnClickListener(mOnClickListener);
@@ -106,6 +122,7 @@ public class UploadEventActivity extends BaseActivity {
 
     @Override
     public void initData() {
+        super.initData();
         mOutPutX = CommonUtils.getScreenWidth(mContext);
         mOutPutY = CommonUtils.getScreenHeight(mContext);
 
@@ -123,33 +140,6 @@ public class UploadEventActivity extends BaseActivity {
         mEventPersonAdapter.notifyDataSetChanged();
 
     }
-
-    private View.OnClickListener mOnClickListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            switch (v.getId()){
-                case R.id.back_img:
-                    finish();
-                    break;
-                case R.id.add_picture_from_album_tv:
-                    if(CommonUtils.checkStoragePermission(mActivity)){
-                        PhotoUtils.openPic(mActivity,CODE_GALLERY_REQUEST);
-                    }
-                    mAddPictureTipsLl.setVisibility(View.GONE);
-                    break;
-                case R.id.add_picture_from_camera_tv:
-                    if(PhotoUtils.checkCameraPermission(mActivity)){
-                        generatePhotoPath();
-                        PhotoUtils.takePicture(mActivity,mCurrentPhotoPath);
-                    }
-                    mAddPictureTipsLl.setVisibility(View.GONE);
-                    break;
-                case R.id.cancel_add_picture_tv:
-                    mAddPictureTipsLl.setVisibility(View.GONE);
-                    break;
-            }
-        }
-    };
 
     class EventPictureAdapter extends BaseAdapter{
 

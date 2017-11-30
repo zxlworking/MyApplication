@@ -71,6 +71,7 @@ public class RiverFragment extends BaseFragment {
     private FrameLayout mStartPauseRiverFl;
     private FrameLayout mUploadRiverInfoFl;
     private FrameLayout mUploadEventInfoFl;
+    private FrameLayout mStartRiverFl;
 
     private ImageView mStartPauseRiverImg;
     private TextView mStartRiverTv;
@@ -129,12 +130,14 @@ public class RiverFragment extends BaseFragment {
 
     @Override
     public void initView(View contentView, Bundle savedInstanceState) {
+        super.initView(contentView,savedInstanceState);
         mMapView = (MapView) contentView.findViewById(R.id.map_view);
         mMapView.onCreate(savedInstanceState);
 
         mStartPauseRiverFl = (FrameLayout) contentView.findViewById(R.id.start_pause_river_fl);
         mUploadRiverInfoFl = (FrameLayout) contentView.findViewById(R.id.upload_river_info_fl);
         mUploadEventInfoFl = (FrameLayout) contentView.findViewById(R.id.upload_event_info_fl);
+        mStartRiverFl = (FrameLayout) contentView.findViewById(R.id.start_river_fl);
 
         mStartPauseRiverImg = (ImageView) contentView.findViewById(R.id.start_pause_river_img);
         mStartRiverTv = (TextView) contentView.findViewById(R.id.start_river_tv);
@@ -149,7 +152,84 @@ public class RiverFragment extends BaseFragment {
         mEndRiverDateContentLl = (LinearLayout) contentView.findViewById(R.id.end_river_date_content_ll);
         mRiverInfoContentLl = (LinearLayout) contentView.findViewById(R.id.rivier_info_content_ll);
 
-        mStartRiverTv.setOnClickListener(mOnClickListener);
+        mOnClickListener = new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                switch (v.getId()){
+                    case R.id.start_river_fl:
+                    case R.id.start_pause_river_fl:
+                        DebugUtils.d(TAG,"onClick::start_pause_river_fl::isStartRiver = " + isStartRiver);
+                        if(isStartRiver){
+                            //停止
+                            isStartRiver = false;
+                            mStartPauseRiverImg.setImageResource(R.mipmap.ic_start_river);
+                            addMark(R.mipmap.ic_map_stop,mLastLatLng);
+
+                            mAMapLocationClientOption.setOnceLocation(true);
+                            mAMapLocationClient.setLocationOption(mAMapLocationClientOption);
+                            mAMapLocationClient.stopLocation();
+
+                            mHandler.removeMessages(MSG_START_COUNT_RIVER_TIME);
+
+                            mRiverEndTime = new Date().getTime();
+                            mRiverEndTimeTv.setText("结束："+mRiverTimeFormat.format(new Date(mRiverEndTime)));
+
+                            mRiverInfoContentLl.setVisibility(View.GONE);
+
+                            mEndRiverContentLl.setVisibility(View.VISIBLE);
+                            mStartRiverContentFl.setVisibility(View.GONE);
+
+                        }else{
+                            //开始
+                            isStartRiver = true;
+                            mLastLatLng = null;
+                            mStartPauseRiverImg.setImageResource(R.mipmap.ic_pause_river);
+
+
+                            mRiverCountTime = 0;
+                            mHandler.removeMessages(MSG_START_COUNT_RIVER_TIME);
+                            mHandler.sendEmptyMessage(MSG_START_COUNT_RIVER_TIME);
+                            mRiverDistance = 0;
+
+                            mRiverStartTime = new Date().getTime();
+                            mRiverEndTime = 0;
+
+                            mRiverDistanceTv.setText("0.00");
+                            mRiverStartTimeTv.setText("开始："+mRiverTimeFormat.format(new Date(mRiverStartTime)));
+                            mRiverEndTimeTv.setText("结束：00:00");
+
+                            mAMapLocationClientOption.setOnceLocation(false);
+                            mAMapLocationClientOption.setInterval(DEFAULT_LOOP_UPLOAD_TIME);
+                            mAMapLocationClient.setLocationOption(mAMapLocationClientOption);
+                            mAMapLocationClient.startLocation();
+
+                            mRiverInfoContentLl.setVisibility(View.VISIBLE);
+
+                            mEndRiverContentLl.setVisibility(View.GONE);
+                            mStartRiverContentFl.setVisibility(View.VISIBLE);
+
+                        }
+                        break;
+                    case R.id.upload_river_info_fl:
+                        DebugUtils.d(TAG,"onClick::upload_river_info_fl");
+                        DebugUtils.d(TAG,"onClick::upload_event_info_fl");
+                        Intent mUploadRiverIntent = new Intent(mContext,UploadRiverActivity.class);
+                        mUploadRiverIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        mUploadRiverIntent.putExtra(UploadRiverActivity.EXTRA_RIVER_START_TIME,mRiverStartTime);
+                        mUploadRiverIntent.putExtra(UploadRiverActivity.EXTRA_RIVER_END_TIME,mRiverEndTime);
+                        startActivity(mUploadRiverIntent);
+                        break;
+                    case R.id.upload_event_info_fl:
+                        DebugUtils.d(TAG,"onClick::upload_event_info_fl");
+                        Intent mUploadEventIntent = new Intent(mContext,UploadEventActivity.class);
+                        mUploadEventIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        startActivity(mUploadEventIntent);
+                        break;
+                }
+            }
+        };
+
+        mStartRiverFl.setOnClickListener(mOnClickListener);
         mStartPauseRiverFl.setOnClickListener(mOnClickListener);
         mUploadRiverInfoFl.setOnClickListener(mOnClickListener);
         mUploadEventInfoFl.setOnClickListener(mOnClickListener);
@@ -157,7 +237,7 @@ public class RiverFragment extends BaseFragment {
 
     @Override
     public void initData() {
-
+        super.initData();
         mRequestLocationPermissionReceiver = new RequestLocationPermissionReceiver();
         IntentFilter mIntentFilter = new IntentFilter(Constants.ACTION_GET_LOCATION_PERMISSION);
         mContext.registerReceiver(mRequestLocationPermissionReceiver,mIntentFilter);
@@ -242,81 +322,6 @@ public class RiverFragment extends BaseFragment {
         }
 
     }
-
-    private View.OnClickListener mOnClickListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            switch (v.getId()){
-                case R.id.start_river_tv:
-                case R.id.start_pause_river_fl:
-                    DebugUtils.d(TAG,"onClick::start_pause_river_fl::isStartRiver = " + isStartRiver);
-                    if(isStartRiver){
-                        //停止
-                        isStartRiver = false;
-                        mStartPauseRiverImg.setImageResource(R.mipmap.ic_start_river);
-                        addMark(R.mipmap.ic_map_stop,mLastLatLng);
-
-                        mAMapLocationClientOption.setOnceLocation(true);
-                        mAMapLocationClient.setLocationOption(mAMapLocationClientOption);
-                        mAMapLocationClient.stopLocation();
-
-                        mHandler.removeMessages(MSG_START_COUNT_RIVER_TIME);
-
-                        mRiverEndTime = new Date().getTime();
-                        mRiverEndTimeTv.setText("结束："+mRiverTimeFormat.format(new Date(mRiverEndTime)));
-
-                        mEndRiverContentLl.setVisibility(View.VISIBLE);
-                        mStartRiverContentFl.setVisibility(View.GONE);
-
-                    }else{
-                        //开始
-                        isStartRiver = true;
-                        mLastLatLng = null;
-                        mStartPauseRiverImg.setImageResource(R.mipmap.ic_pause_river);
-
-
-                        mRiverCountTime = 0;
-                        mHandler.removeMessages(MSG_START_COUNT_RIVER_TIME);
-                        mHandler.sendEmptyMessage(MSG_START_COUNT_RIVER_TIME);
-                        mRiverDistance = 0;
-
-                        mRiverStartTime = new Date().getTime();
-                        mRiverEndTime = 0;
-
-                        mRiverDistanceTv.setText("0.00");
-                        mRiverStartTimeTv.setText("开始："+mRiverTimeFormat.format(new Date(mRiverStartTime)));
-                        mRiverEndTimeTv.setText("结束：00:00");
-
-                        mAMapLocationClientOption.setOnceLocation(false);
-                        mAMapLocationClientOption.setInterval(DEFAULT_LOOP_UPLOAD_TIME);
-                        mAMapLocationClient.setLocationOption(mAMapLocationClientOption);
-                        mAMapLocationClient.startLocation();
-
-                        mRiverInfoContentLl.setVisibility(View.VISIBLE);
-
-                        mEndRiverContentLl.setVisibility(View.GONE);
-                        mStartRiverContentFl.setVisibility(View.VISIBLE);
-
-                    }
-                    break;
-                case R.id.upload_river_info_fl:
-                    DebugUtils.d(TAG,"onClick::upload_river_info_fl");
-                    DebugUtils.d(TAG,"onClick::upload_event_info_fl");
-                    Intent mUploadRiverIntent = new Intent(mContext,UploadRiverActivity.class);
-                    mUploadRiverIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                    mUploadRiverIntent.putExtra(UploadRiverActivity.EXTRA_RIVER_START_TIME,mRiverStartTime);
-                    mUploadRiverIntent.putExtra(UploadRiverActivity.EXTRA_RIVER_END_TIME,mRiverEndTime);
-                    startActivity(mUploadRiverIntent);
-                    break;
-                case R.id.upload_event_info_fl:
-                    DebugUtils.d(TAG,"onClick::upload_event_info_fl");
-                    Intent mUploadEventIntent = new Intent(mContext,UploadEventActivity.class);
-                    mUploadEventIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                    startActivity(mUploadEventIntent);
-                    break;
-            }
-        }
-    };
 
     private  LocationSource mLocationSource = new LocationSource() {
         @Override

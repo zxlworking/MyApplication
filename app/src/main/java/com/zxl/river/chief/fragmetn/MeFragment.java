@@ -23,7 +23,21 @@ public class MeFragment extends BaseFragment {
 
     @Override
     public void initView(View contentView, Bundle savedInstanceState) {
+        super.initView(contentView,savedInstanceState);
         mDealEventLl = (LinearLayout) contentView.findViewById(R.id.deal_event_ll);
+
+        mOnClickListener = new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                switch (v.getId()){
+                    case R.id.deal_event_ll:
+                        Intent mSettingsIntent = new Intent(mContext,EventListActivity.class);
+                        mSettingsIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        startActivity(mSettingsIntent);
+                        break;
+                }
+            }
+        };
 
         mDealEventLl.setOnClickListener(mOnClickListener);
     }
@@ -33,16 +47,4 @@ public class MeFragment extends BaseFragment {
 
     }
 
-    private View.OnClickListener mOnClickListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            switch (v.getId()){
-                case R.id.deal_event_ll:
-                    Intent mSettingsIntent = new Intent(mContext,EventListActivity.class);
-                    mSettingsIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                    startActivity(mSettingsIntent);
-                    break;
-            }
-        }
-    };
 }
