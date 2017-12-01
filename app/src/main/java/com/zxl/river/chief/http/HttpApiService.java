@@ -30,7 +30,7 @@ public interface HttpApiService {
     Observable<ResponseBody> uploadFile(@Part("file\"; filename=\"avatar.png\"") RequestBody file, @Part("nickName") RequestBody nickName);
 
     @Multipart
-    @POST("/files")
+    @POST("Test")
     Observable<ResponseBody> uploadFiles(@PartMap Map<String, RequestBody> params);
 
 }

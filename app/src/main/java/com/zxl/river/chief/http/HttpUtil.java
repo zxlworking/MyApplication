@@ -99,6 +99,8 @@ public class HttpUtil {
         }
         RequestBody nickNameBody = RequestBody.create(MediaType.parse("text/plain"), "nickName");
         partMap.put("nickName" , nickNameBody);
+        RequestBody typeBody = RequestBody.create(MediaType.parse("text/plain"), "3");
+        partMap.put("apptype" , typeBody);
 
         Observable<ResponseBody> mObservable = mHttpApiService.uploadFiles(partMap);
 
