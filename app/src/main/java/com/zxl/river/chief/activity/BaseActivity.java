@@ -23,8 +23,8 @@ public abstract class BaseActivity extends Activity {
 
     private TextView mTitleTv;
 
-    private ImageView mBackImg;
-    private ImageView mSettingsImg;
+    private ImageView mTitleBarLeftImg;
+    private ImageView mTitleBarRightImg;
 
     public View.OnClickListener mOnClickListener = null;
 
@@ -54,16 +54,16 @@ public abstract class BaseActivity extends Activity {
 
     public void initView(){
         mTitleTv = (TextView) findViewById(R.id.title_tv);
-        mBackImg = (ImageView) findViewById(R.id.back_img);
-        mSettingsImg = (ImageView) findViewById(R.id.settings_img);
+        mTitleBarLeftImg = (ImageView) findViewById(R.id.title_bar_left_img);
+        mTitleBarRightImg = (ImageView) findViewById(R.id.title_bar_right_img);
 
     }
     public void initData(){
-        if(mBackImg != null){
-            mBackImg.setOnClickListener(mOnClickListener);
+        if(mTitleBarLeftImg != null){
+            mTitleBarLeftImg.setOnClickListener(mOnClickListener);
         }
-        if(mSettingsImg != null){
-            mSettingsImg.setOnClickListener(mOnClickListener);
+        if(mTitleBarRightImg != null){
+            mTitleBarRightImg.setOnClickListener(mOnClickListener);
         }
     }
 
@@ -73,15 +73,15 @@ public abstract class BaseActivity extends Activity {
         }
     }
 
-    public void setBackImgVisibility(int v){
-        if(mBackImg != null){
-            mBackImg.setVisibility(v);
+    public void setLeftImgVisibility(int v){
+        if(mTitleBarLeftImg != null){
+            mTitleBarLeftImg.setVisibility(v);
         }
     }
 
-    public void setSettingsImgVisibility(int v){
-        if(mSettingsImg != null){
-            mSettingsImg.setVisibility(v);
+    public void setRightImgVisibility(int v){
+        if(mTitleBarRightImg != null){
+            mTitleBarRightImg.setVisibility(v);
         }
     }
 }

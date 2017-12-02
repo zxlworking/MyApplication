@@ -70,6 +70,16 @@
             android:windowSoftInputMode="stateHidden|stateAlwaysHidden"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:screenOrientation="portrait"/>
+        <activity
+            android:name=".activity.NotificationDetailActivity"
+            android:windowSoftInputMode="stateHidden|stateAlwaysHidden"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:screenOrientation="portrait"/>
+        <activity
+            android:name=".activity.EventDetailActivity"
+            android:windowSoftInputMode="stateHidden|stateAlwaysHidden"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:screenOrientation="portrait"/>
 
 
         <!-- 定位需要的服务 使用2.0的定位需要加上这个 -->

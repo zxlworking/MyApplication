@@ -55,4 +55,14 @@ public class Preference {
         return mSharedPreferences.getString("PassWord","");
     }
 
+    public void setRiverRate(long time){
+        SharedPreferences.Editor mEditor = mSharedPreferences.edit();
+        mEditor.putLong("RiverRate",time);
+        mEditor.commit();
+    }
+
+    public long getRiverRate(){
+        return mSharedPreferences.getLong("RiverRate",60000);
+    }
+
 }

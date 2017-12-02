@@ -7,7 +7,7 @@
 
     <EditText
         android:layout_width="match_parent"
-        android:layout_height="44dp"
+        android:layout_height="wrap_content"
         android:background="#ffffff"
         android:textSize="16sp"
         android:paddingTop="12dp"
@@ -20,7 +20,7 @@
 
     <EditText
         android:layout_width="match_parent"
-        android:layout_height="108dp"
+        android:layout_height="wrap_content"
         android:background="#ffffff"
         android:layout_marginTop="24dp"
         android:gravity="left|top"
@@ -32,5 +32,11 @@
         android:hint="输入内容"
         android:textColorHint="#b6b8b8"
         android:textColor="#b6b8b8"/>
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:src="#c4c4c4"
+        android:visibility="visible"/>
 
 </LinearLayout>

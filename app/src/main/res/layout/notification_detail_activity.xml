@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#f2f2f2">
+
+    <include
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        layout="@layout/title_bar"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:padding="16dp"
+        android:text="关于开展各级河长巡河工作的通知"
+        android:textSize="16sp"
+        android:background="#ffffff"/>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="12dp"
+        android:scrollbars="none">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:padding="16dp"
+            android:background="#ffffff"
+            android:orientation="vertical">
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="各镇、园区，县直有关单位：
+根据市河长办要求，各级河长要开展巡河工作。县级河长每月巡河不少于1次，镇级河长每月巡河不少于2次，村级河长每月巡河不少于4次。巡查时要结合区域实际情况，对河湖日常保洁、违法排污、涉水违建等重点内容逐项进行检查。对巡查中发现的问题，要及时联系镇（园区）、相关部门进行处理，并向河长制办公室报告。每次巡查情况应及时记录在册，每月5、15、25日，报本级河长办汇总；每季度对河湖巡查基本情况、发现问题整改情况、投诉举报处理情况等进行汇总并形成巡查报告，于每季度首月5日前报送县级河长制办公室。县级河长巡查报告由县级各河长协助单位负责，镇级河长巡查报告由各镇（园区）河长制办公室负责。
+特此通知。
+2017年8月16日
+
+
+抄送：各县级河长"/>
+        </LinearLayout>
+    </ScrollView>
+
+
+</LinearLayout>

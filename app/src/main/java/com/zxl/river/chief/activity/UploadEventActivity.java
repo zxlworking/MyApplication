@@ -28,6 +28,7 @@ import com.facebook.imagepipeline.image.ImageInfo;
 import com.facebook.imagepipeline.request.ImageRequest;
 import com.facebook.imagepipeline.request.ImageRequestBuilder;
 import com.zxl.river.chief.R;
+import com.zxl.river.chief.common.BaseViewHolder;
 import com.zxl.river.chief.common.Constants;
 import com.zxl.river.chief.utils.CommonUtils;
 import com.zxl.river.chief.utils.DebugUtils;
@@ -51,12 +52,10 @@ import static com.zxl.river.chief.utils.PhotoUtils.STORAGE_PERMISSIONS_REQUEST_C
 public class UploadEventActivity extends BaseActivity {
     private static final String TAG = "UploadEventActivity";
 
-    private GridView mEventPictureGridView;
-    private EventPictureAdapter mEventPictureAdapter;
-    private List<String> mEventPicturePaths = new ArrayList<>();
+    private RecyclerView mUploadEventRecyclerView;
+    private UploadEventAdapter mUploadEventAdapter;
 
-    private GridView mEventPersonGridView;
-    private EventPersonAdapter mEventPersonAdapter;
+    private List<String> mEventPicturePaths = new ArrayList<>();
     private List<String> mEventPersonPaths = new ArrayList<>();
 
     private LinearLayout mAddPictureTipsLl;
@@ -77,22 +76,26 @@ public class UploadEventActivity extends BaseActivity {
     @Override
     public void initView() {
         super.initView();
-        mEventPictureGridView = (GridView) findViewById(R.id.event_picture_grid_view);
-        mEventPersonGridView = (GridView) findViewById(R.id.event_person_grid_view);
+
+        setRightImgVisibility(View.GONE);
+        setTitle("上报事件");
 
         mAddPictureTipsLl = (LinearLayout) findViewById(R.id.add_picture_tips_ll);
         mAddPictureFromAlbumTv = (TextView) findViewById(R.id.add_picture_from_album_tv);
         mAddPictureFromCameraTv = (TextView) findViewById(R.id.add_picture_from_camera_tv);
         mCancelAddPictureTv = (TextView) findViewById(R.id.cancel_add_picture_tv);
 
-        setSettingsImgVisibility(View.GONE);
-        setTitle("上报事件");
+        mUploadEventRecyclerView = (RecyclerView) findViewById(R.id.upload_event_recycler_view);
+        mUploadEventRecyclerView.setLayoutManager(new LinearLayoutManager(mContext));
+        mUploadEventAdapter = new UploadEventAdapter();
+        mUploadEventRecyclerView.setAdapter(mUploadEventAdapter);
+
 
         mOnClickListener = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 switch (v.getId()){
-                    case R.id.back_img:
+                    case R.id.title_bar_left_img:
                         finish();
                         break;
                     case R.id.add_picture_from_album_tv:
@@ -126,144 +129,139 @@ public class UploadEventActivity extends BaseActivity {
         mOutPutX = CommonUtils.getScreenWidth(mContext);
         mOutPutY = CommonUtils.getScreenHeight(mContext);
 
-        mEventPictureAdapter = new EventPictureAdapter();
-        mEventPictureGridView.setAdapter(mEventPictureAdapter);
-
-        mEventPersonAdapter = new EventPersonAdapter();
-        mEventPersonGridView.setAdapter(mEventPersonAdapter);
 
         mEventPersonPaths.add("http://img3.duitang.com/uploads/item/201511/13/20151113110644_PcSFj.thumb.224_0.jpeg");
         mEventPersonPaths.add("http://diy.qqjay.com/u2/2014/1130/6272576897a2e42385ddbcf41435d938.jpg");
         mEventPersonPaths.add("http://www.feizl.com/upload2007/2014_01/140116182482507.jpg");
         mEventPersonPaths.add("http://img2.imgtn.bdimg.com/it/u=3746075707,1914896074&fm=214&gp=0.jpg");
         mEventPersonPaths.add("http://img3.imgtn.bdimg.com/it/u=2777008330,1289798081&fm=27&gp=0.jpg");
-        mEventPersonAdapter.notifyDataSetChanged();
+        mUploadEventAdapter.notifyDataSetChanged();
 
     }
 
-    class EventPictureAdapter extends BaseAdapter{
-
-        @Override
-        public int getCount() {
-            return mEventPicturePaths.size()+1;
-        }
-
-        @Override
-        public String getItem(int position) {
-            return mEventPicturePaths.get(position);
-        }
-
-        @Override
-        public long getItemId(int position) {
-            return position;
-        }
-
-        @Override
-        public View getView(final int position, View convertView, ViewGroup parent) {
-            if(null == convertView){
-                convertView = LayoutInflater.from(mContext).inflate(R.layout.upload_event_picture_item_view,null);
-            }
-
-            SimpleDraweeView mSimpleDraweeView = (SimpleDraweeView) convertView.findViewById(R.id.upload_event_picture_item_img);
-
-            if(position == getCount() - 1){
-                mSimpleDraweeView.setImageResource(R.drawable.ic_add_picture);
-                mSimpleDraweeView.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        mAddPictureTipsLl.setVisibility(View.VISIBLE);
-                    }
-                });
-            }else{
-                //Uri.parse("file://" + MyBimp.tempSelectBitmap.get(position).path))
-
-                /*
-                mSimpleDraweeView.setDownsampleEnabled(true);
-                Uri mUri = Uri.parse("file://" + mEventPicturePaths.get(position));
-                mSimpleDraweeView.setImageURI(mUri);
-                mSimpleDraweeView.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        mEventPicturePaths.remove(position);
-                        notifyDataSetChanged();
-                    }
-                });
-                */
-
-
-                int mWidth = mSimpleDraweeView.getWidth();
-                int mHeight = mSimpleDraweeView.getHeight();
-                if(mWidth > 0 && mHeight > 0){
-                    Uri mUri = Uri.parse("file://" + mEventPicturePaths.get(position));
-                    ImageRequest request = ImageRequestBuilder.newBuilderWithSource(mUri)
-                            .setResizeOptions(new ResizeOptions(mWidth,mHeight))
-                            .build();
-
-                    DraweeController controller = Fresco.newDraweeControllerBuilder()
-                            .setImageRequest(request)
-                            .setOldController(mSimpleDraweeView.getController())
-                            .setControllerListener(new BaseControllerListener<ImageInfo>())
-                            .build();
-                    mSimpleDraweeView.setController(controller);
-                }
-
-            }
-
-            return convertView;
-        }
-    }
-
-    class EventPersonAdapter extends BaseAdapter{
-
-        @Override
-        public int getCount() {
-            return mEventPersonPaths.size()+1;
-        }
-
-        @Override
-        public String getItem(int position) {
-            return mEventPersonPaths.get(position);
-        }
-
-        @Override
-        public long getItemId(int position) {
-            return position;
-        }
-
-        @Override
-        public View getView(final int position, View convertView, ViewGroup parent) {
-            if(null == convertView){
-                convertView = LayoutInflater.from(mContext).inflate(R.layout.upload_event_person_item_view,null);
-            }
-
-            SimpleDraweeView mSimpleDraweeView = (SimpleDraweeView) convertView.findViewById(R.id.upload_event_person_item_img);
-
-            if(position == getCount() - 1){
-                mSimpleDraweeView.setImageResource(R.drawable.ic_add_picture);
-                /*
-                mSimpleDraweeView.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        mAddPictureTipsLl.setVisibility(View.VISIBLE);
-                    }
-                });
-                */
-            }else{
-                mSimpleDraweeView.setImageURI(mEventPersonPaths.get(position));
-                /*
-                mSimpleDraweeView.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        mEventPicturePaths.remove(position);
-                        notifyDataSetChanged();
-                    }
-                });
-                */
-            }
-
-            return convertView;
-        }
-    }
+//    class EventPictureAdapter extends BaseAdapter{
+//
+//        @Override
+//        public int getCount() {
+//            return mEventPicturePaths.size()+1;
+//        }
+//
+//        @Override
+//        public String getItem(int position) {
+//            return mEventPicturePaths.get(position);
+//        }
+//
+//        @Override
+//        public long getItemId(int position) {
+//            return position;
+//        }
+//
+//        @Override
+//        public View getView(final int position, View convertView, ViewGroup parent) {
+//            if(null == convertView){
+//                convertView = LayoutInflater.from(mContext).inflate(R.layout.upload_event_picture_item_view,null);
+//            }
+//
+//            SimpleDraweeView mSimpleDraweeView = (SimpleDraweeView) convertView.findViewById(R.id.upload_event_picture_item_img);
+//
+//            if(position == getCount() - 1){
+//                mSimpleDraweeView.setImageResource(R.drawable.ic_add_picture);
+//                mSimpleDraweeView.setOnClickListener(new View.OnClickListener() {
+//                    @Override
+//                    public void onClick(View v) {
+//                        mAddPictureTipsLl.setVisibility(View.VISIBLE);
+//                    }
+//                });
+//            }else{
+//                //Uri.parse("file://" + MyBimp.tempSelectBitmap.get(position).path))
+//
+//                /*
+//                mSimpleDraweeView.setDownsampleEnabled(true);
+//                Uri mUri = Uri.parse("file://" + mEventPicturePaths.get(position));
+//                mSimpleDraweeView.setImageURI(mUri);
+//                mSimpleDraweeView.setOnClickListener(new View.OnClickListener() {
+//                    @Override
+//                    public void onClick(View v) {
+//                        mEventPicturePaths.remove(position);
+//                        notifyDataSetChanged();
+//                    }
+//                });
+//                */
+//
+//
+//                int mWidth = mSimpleDraweeView.getWidth();
+//                int mHeight = mSimpleDraweeView.getHeight();
+//                if(mWidth > 0 && mHeight > 0){
+//                    Uri mUri = Uri.parse("file://" + mEventPicturePaths.get(position));
+//                    ImageRequest request = ImageRequestBuilder.newBuilderWithSource(mUri)
+//                            .setResizeOptions(new ResizeOptions(mWidth,mHeight))
+//                            .build();
+//
+//                    DraweeController controller = Fresco.newDraweeControllerBuilder()
+//                            .setImageRequest(request)
+//                            .setOldController(mSimpleDraweeView.getController())
+//                            .setControllerListener(new BaseControllerListener<ImageInfo>())
+//                            .build();
+//                    mSimpleDraweeView.setController(controller);
+//                }
+//
+//            }
+//
+//            return convertView;
+//        }
+//    }
+//
+//    class EventPersonAdapter extends BaseAdapter{
+//
+//        @Override
+//        public int getCount() {
+//            return mEventPersonPaths.size()+1;
+//        }
+//
+//        @Override
+//        public String getItem(int position) {
+//            return mEventPersonPaths.get(position);
+//        }
+//
+//        @Override
+//        public long getItemId(int position) {
+//            return position;
+//        }
+//
+//        @Override
+//        public View getView(final int position, View convertView, ViewGroup parent) {
+//            if(null == convertView){
+//                convertView = LayoutInflater.from(mContext).inflate(R.layout.upload_event_person_item_view,null);
+//            }
+//
+//            SimpleDraweeView mSimpleDraweeView = (SimpleDraweeView) convertView.findViewById(R.id.upload_event_person_item_img);
+//
+//            if(position == getCount() - 1){
+//                mSimpleDraweeView.setImageResource(R.drawable.ic_add_picture);
+//                /*
+//                mSimpleDraweeView.setOnClickListener(new View.OnClickListener() {
+//                    @Override
+//                    public void onClick(View v) {
+//                        mAddPictureTipsLl.setVisibility(View.VISIBLE);
+//                    }
+//                });
+//                */
+//            }else{
+//                mSimpleDraweeView.setImageURI(mEventPersonPaths.get(position));
+//                /*
+//                mSimpleDraweeView.setOnClickListener(new View.OnClickListener() {
+//                    @Override
+//                    public void onClick(View v) {
+//                        mEventPicturePaths.remove(position);
+//                        notifyDataSetChanged();
+//                    }
+//                });
+//                */
+//            }
+//
+//            return convertView;
+//        }
+//    }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
@@ -305,7 +303,7 @@ public class UploadEventActivity extends BaseActivity {
                         DebugUtils.d(TAG,"onActivityResult::CODE_CAMERA_REQUEST::data = " + data.getData());
                     }
                     mEventPicturePaths.add(0,mCurrentPhotoPath);
-                    mEventPictureAdapter.notifyDataSetChanged();
+                    mUploadEventAdapter.notifyDataSetChanged();
                     /*
                     generateCropPhotoPath();
                     PhotoUtils.cropImageUri(this, mCurrentPhotoPath, mCurrentCropPhotoPath, 1, 1, mOutPutX, mOutPutY, CODE_RESULT_REQUEST);
@@ -321,7 +319,7 @@ public class UploadEventActivity extends BaseActivity {
                             DebugUtils.d(TAG,"onActivityResult::CODE_GALLERY_REQUEST::path = " + newUri.getPath());
 
                             mEventPicturePaths.add(0,mNewPath);
-                            mEventPictureAdapter.notifyDataSetChanged();
+                            mUploadEventAdapter.notifyDataSetChanged();
                             /*
                             generateCropPhotoPath();
                             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N){
@@ -346,5 +344,280 @@ public class UploadEventActivity extends BaseActivity {
     }
     private void generateCropPhotoPath(){
         mCurrentCropPhotoPath = Constants.APP_PHOTO_DIR + System.currentTimeMillis() + ".jpg";
+    }
+
+    class UploadEventAdapter extends RecyclerView.Adapter<BaseViewHolder>{
+        private static final int HEAD_ITEM_TYPE = 0;
+        private static final int PICTURE_ITEM_TYPE = 1;
+        private static final int PERSON_ITEM_TYPE = 2;
+        private static final int BOTTOM_ITEM_TYPE = 3;
+
+
+        private static final int HEAD_COUNT = 1;
+        private static final int BOTTOM_COUNT = 1;
+
+
+        @Override
+        public int getItemViewType(int position) {
+            int mPictureItemCount = mEventPicturePaths.size() / 4 + (mEventPicturePaths.size() % 4 != 0 ? 1 : 0) + 1;
+            int mPersonItemCount = mEventPersonPaths.size() / 4 + (mEventPersonPaths.size() % 4 != 0 ? 1 : 0) + 1;
+            if(position < HEAD_COUNT){
+                return HEAD_ITEM_TYPE;
+            }else if(position < HEAD_COUNT + mPictureItemCount){
+                return PICTURE_ITEM_TYPE;
+            }else if(position < HEAD_COUNT + mPictureItemCount + mPersonItemCount){
+                return PERSON_ITEM_TYPE;
+            }else if(position < HEAD_COUNT + mPictureItemCount + mPersonItemCount + BOTTOM_COUNT){
+                return BOTTOM_ITEM_TYPE;
+            }
+            return super.getItemViewType(position);
+        }
+
+        @Override
+        public int getItemCount() {
+            int mPictureItemCount = mEventPicturePaths.size() / 4 + (mEventPicturePaths.size() % 4 != 0 ? 1 : 0) + 1;
+            int mPersonItemCount = mEventPersonPaths.size() / 4 + (mEventPersonPaths.size() % 4 != 0 ? 1 : 0) + 1;
+            int mCount = HEAD_COUNT +
+                    mPictureItemCount +
+                    mPersonItemCount +
+                    BOTTOM_COUNT;
+            return mCount;
+        }
+
+        @Override
+        public BaseViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+            switch (viewType){
+                case HEAD_ITEM_TYPE:
+                    View mHeadItemView = LayoutInflater.from(mContext).inflate(R.layout.upload_event_head_view,parent,false);
+                    return new HeadItemViewHolder(mHeadItemView);
+                case PICTURE_ITEM_TYPE:
+                    View mPictureItemView = LayoutInflater.from(mContext).inflate(R.layout.upload_event_picture_item_view,parent,false);
+                    return new PictureItemViewHolder(mPictureItemView);
+                case PERSON_ITEM_TYPE:
+                    View mPersonItemView = LayoutInflater.from(mContext).inflate(R.layout.upload_event_person_item_view,parent,false);
+                    return new PersonItemViewHolder(mPersonItemView);
+                case BOTTOM_ITEM_TYPE:
+                    View mBottomItemView = LayoutInflater.from(mContext).inflate(R.layout.upload_event_bottom_view,parent,false);
+                    return new BottomItemViewHolder(mBottomItemView);
+            }
+            return null;
+        }
+
+        @Override
+        public void onBindViewHolder(BaseViewHolder holder, int position) {
+            if(holder instanceof HeadItemViewHolder){
+
+            }else if(holder instanceof PictureItemViewHolder){
+                int mPictureIndex = position - HEAD_COUNT;
+                LinearLayout mUploadEventPictureItemTopLl = (LinearLayout) holder.findViewById(R.id.upload_event_picture_item_top_ll);
+                LinearLayout mUploadEventPictureItemLl1 = (LinearLayout) holder.findViewById(R.id.upload_event_picture_item_ll_1);
+                LinearLayout mUploadEventPictureItemLl2 = (LinearLayout) holder.findViewById(R.id.upload_event_picture_item_ll_2);
+                LinearLayout mUploadEventPictureItemLl3 = (LinearLayout) holder.findViewById(R.id.upload_event_picture_item_ll_3);
+                LinearLayout mUploadEventPictureItemLl4 = (LinearLayout) holder.findViewById(R.id.upload_event_picture_item_ll_4);
+                SimpleDraweeView mUploadEventPictureItemImg1 = (SimpleDraweeView) holder.findViewById(R.id.upload_event_picture_item_img_1);
+                SimpleDraweeView mUploadEventPictureItemImg2 = (SimpleDraweeView) holder.findViewById(R.id.upload_event_picture_item_img_2);
+                SimpleDraweeView mUploadEventPictureItemImg3 = (SimpleDraweeView) holder.findViewById(R.id.upload_event_picture_item_img_3);
+                SimpleDraweeView mUploadEventPictureItemImg4 = (SimpleDraweeView) holder.findViewById(R.id.upload_event_picture_item_img_4);
+
+                if(mPictureIndex < 1){
+                    mUploadEventPictureItemTopLl.setVisibility(View.VISIBLE);
+                }else{
+                    mUploadEventPictureItemTopLl.setVisibility(View.GONE);
+                }
+
+                if(mPictureIndex * 4 < mEventPicturePaths.size()){
+                    mUploadEventPictureItemLl1.setVisibility(View.VISIBLE);
+
+                    setSimpleDraweeViewLocalPath(mUploadEventPictureItemImg1,mEventPicturePaths.get(mPictureIndex * 4));
+                }else if(mPictureIndex * 4 == mEventPicturePaths.size()){
+                    mUploadEventPictureItemLl1.setVisibility(View.VISIBLE);
+
+                    setSimpleDraweeViewRes(mUploadEventPictureItemImg1,R.drawable.ic_add_picture);
+                }else{
+                    mUploadEventPictureItemLl1.setVisibility(View.GONE);
+                }
+
+                if(mPictureIndex * 4 + 1 < mEventPicturePaths.size()){
+                    mUploadEventPictureItemLl2.setVisibility(View.VISIBLE);
+
+                    setSimpleDraweeViewLocalPath(mUploadEventPictureItemImg2,mEventPicturePaths.get(mPictureIndex * 4 + 1));
+                }else if(mPictureIndex * 4 + 1 == mEventPicturePaths.size()){
+                    mUploadEventPictureItemLl2.setVisibility(View.VISIBLE);
+
+                    setSimpleDraweeViewRes(mUploadEventPictureItemImg2,R.drawable.ic_add_picture);
+                }else{
+                    mUploadEventPictureItemLl2.setVisibility(View.GONE);
+                }
+
+                if(mPictureIndex * 4 + 2 < mEventPicturePaths.size()){
+                    mUploadEventPictureItemLl3.setVisibility(View.VISIBLE);
+
+                    setSimpleDraweeViewLocalPath(mUploadEventPictureItemImg3,mEventPicturePaths.get(mPictureIndex * 4 + 2));
+                }else if(mPictureIndex * 4 + 2 == mEventPicturePaths.size()){
+                    mUploadEventPictureItemLl3.setVisibility(View.VISIBLE);
+
+                    setSimpleDraweeViewRes(mUploadEventPictureItemImg3,R.drawable.ic_add_picture);
+                }else{
+                    mUploadEventPictureItemLl3.setVisibility(View.GONE);
+                }
+
+                if(mPictureIndex * 4 + 3 < mEventPicturePaths.size()){
+                    mUploadEventPictureItemLl4.setVisibility(View.VISIBLE);
+
+                    setSimpleDraweeViewLocalPath(mUploadEventPictureItemImg4,mEventPicturePaths.get(mPictureIndex * 4 + 3));
+                }else if(mPictureIndex * 4 + 3 == mEventPicturePaths.size()){
+                    mUploadEventPictureItemLl4.setVisibility(View.VISIBLE);
+
+                    setSimpleDraweeViewRes(mUploadEventPictureItemImg4,R.drawable.ic_add_picture);
+                }else{
+                    mUploadEventPictureItemLl4.setVisibility(View.GONE);
+                }
+
+                if(mPictureIndex * 4 == mEventPicturePaths.size() ||
+                        mPictureIndex * 4 + 1 == mEventPicturePaths.size() ||
+                        mPictureIndex * 4 + 2 == mEventPicturePaths.size() ||
+                        mPictureIndex * 4 + 3 == mEventPicturePaths.size()){
+                    holder.getContentView().setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            mAddPictureTipsLl.setVisibility(View.VISIBLE);
+                        }
+                    });
+                }
+            }else if(holder instanceof PersonItemViewHolder){
+                int mPictureItemCount = mEventPicturePaths.size() / 4 + (mEventPicturePaths.size() % 4 != 0 ? 1 : 0) + 1;
+                int mPersonIndex = position - HEAD_COUNT - mPictureItemCount;
+                LinearLayout mUploadEventPersonItemTopLl = (LinearLayout) holder.findViewById(R.id.upload_event_person_item_top_ll);
+                LinearLayout mUploadEventPersonItemLl1 = (LinearLayout) holder.findViewById(R.id.upload_event_person_item_ll_1);
+                LinearLayout mUploadEventPersonItemLl2 = (LinearLayout) holder.findViewById(R.id.upload_event_person_item_ll_2);
+                LinearLayout mUploadEventPersonItemLl3 = (LinearLayout) holder.findViewById(R.id.upload_event_person_item_ll_3);
+                LinearLayout mUploadEventPersonItemLl4 = (LinearLayout) holder.findViewById(R.id.upload_event_person_item_ll_4);
+                SimpleDraweeView mUploadEventPersonItemImg1 = (SimpleDraweeView) holder.findViewById(R.id.upload_event_person_item_img_1);
+                SimpleDraweeView mUploadEventPersonItemImg2 = (SimpleDraweeView) holder.findViewById(R.id.upload_event_person_item_img_2);
+                SimpleDraweeView mUploadEventPersonItemImg3 = (SimpleDraweeView) holder.findViewById(R.id.upload_event_person_item_img_3);
+                SimpleDraweeView mUploadEventPersonItemImg4 = (SimpleDraweeView) holder.findViewById(R.id.upload_event_person_item_img_4);
+
+                if(mPersonIndex < 1){
+                    mUploadEventPersonItemTopLl.setVisibility(View.VISIBLE);
+                }else{
+                    mUploadEventPersonItemTopLl.setVisibility(View.GONE);
+                }
+
+                if(mPersonIndex * 4 < mEventPersonPaths.size()){
+                    mUploadEventPersonItemLl1.setVisibility(View.VISIBLE);
+
+                    mUploadEventPersonItemImg1.setImageURI(mEventPersonPaths.get(mPersonIndex));
+                }else if(mPersonIndex * 4 == mEventPersonPaths.size()){
+                    mUploadEventPersonItemLl1.setVisibility(View.VISIBLE);
+
+                    setSimpleDraweeViewRes(mUploadEventPersonItemImg1,R.drawable.ic_add_picture);
+                }else{
+                    mUploadEventPersonItemLl1.setVisibility(View.GONE);
+                }
+
+                if(mPersonIndex * 4 + 1 < mEventPersonPaths.size()){
+                    mUploadEventPersonItemLl2.setVisibility(View.VISIBLE);
+
+                    mUploadEventPersonItemImg2.setImageURI(mEventPersonPaths.get(mPersonIndex * 4 + 1));
+                }else if(mPersonIndex * 4 + 1 == mEventPersonPaths.size()){
+                    mUploadEventPersonItemLl2.setVisibility(View.VISIBLE);
+
+                    setSimpleDraweeViewRes(mUploadEventPersonItemImg2,R.drawable.ic_add_picture);
+                }else{
+                    mUploadEventPersonItemLl2.setVisibility(View.GONE);
+                }
+
+                if(mPersonIndex * 4 + 2 < mEventPersonPaths.size()){
+                    mUploadEventPersonItemLl3.setVisibility(View.VISIBLE);
+
+                    mUploadEventPersonItemImg3.setImageURI(mEventPersonPaths.get(mPersonIndex * 4 + 2));
+                }else if(mPersonIndex * 4 + 2 == mEventPersonPaths.size()){
+                    mUploadEventPersonItemLl3.setVisibility(View.VISIBLE);
+
+                    setSimpleDraweeViewRes(mUploadEventPersonItemImg3,R.drawable.ic_add_picture);
+                }else{
+                    mUploadEventPersonItemLl3.setVisibility(View.GONE);
+                }
+
+                if(mPersonIndex * 4 + 3 < mEventPersonPaths.size()){
+                    mUploadEventPersonItemLl4.setVisibility(View.VISIBLE);
+
+                    mUploadEventPersonItemImg4.setImageURI(mEventPersonPaths.get(mPersonIndex * 4 + 3));
+                }else if(mPersonIndex * 4 + 3 == mEventPersonPaths.size()){
+                    mUploadEventPersonItemLl4.setVisibility(View.VISIBLE);
+
+                    setSimpleDraweeViewRes(mUploadEventPersonItemImg4,R.drawable.ic_add_picture);
+                }else{
+                    mUploadEventPersonItemLl4.setVisibility(View.GONE);
+                }
+            }else if(holder instanceof BottomItemViewHolder){
+
+            }
+        }
+
+        private void setSimpleDraweeViewLocalPath(SimpleDraweeView simpleDraweeViewRes,String path){
+            int mWidth = 60;
+            int mHeight = 60;
+            if(mWidth > 0 && mHeight > 0){
+                Uri mUri = Uri.parse("file://" + path);
+                ImageRequest request = ImageRequestBuilder.newBuilderWithSource(mUri)
+                        .setResizeOptions(new ResizeOptions(mWidth,mHeight))
+                        .build();
+
+                DraweeController controller = Fresco.newDraweeControllerBuilder()
+                        .setImageRequest(request)
+                        .setOldController(simpleDraweeViewRes.getController())
+                        .setControllerListener(new BaseControllerListener<ImageInfo>())
+                        .build();
+                simpleDraweeViewRes.setController(controller);
+            }
+        }
+
+        private void setSimpleDraweeViewRes(SimpleDraweeView simpleDraweeViewRes,int resId){
+            int mWidth = 60;
+            int mHeight = 60;
+            if(mWidth > 0 && mHeight > 0){
+                Uri mUri = Uri.parse("res://" + mContext.getPackageName() + "/" + resId);
+                ImageRequest request = ImageRequestBuilder.newBuilderWithSource(mUri)
+                        .setResizeOptions(new ResizeOptions(mWidth,mHeight))
+                        .build();
+
+                DraweeController controller = Fresco.newDraweeControllerBuilder()
+                        .setImageRequest(request)
+                        .setOldController(simpleDraweeViewRes.getController())
+                        .setControllerListener(new BaseControllerListener<ImageInfo>())
+                        .build();
+                simpleDraweeViewRes.setController(controller);
+            }
+        }
+
+    }
+
+    class HeadItemViewHolder extends BaseViewHolder{
+
+        public HeadItemViewHolder(View itemView) {
+            super(itemView);
+        }
+    }
+
+    class PictureItemViewHolder extends BaseViewHolder{
+
+        public PictureItemViewHolder(View itemView) {
+            super(itemView);
+        }
+    }
+
+    class PersonItemViewHolder extends BaseViewHolder{
+
+        public PersonItemViewHolder(View itemView) {
+            super(itemView);
+        }
+    }
+
+    class BottomItemViewHolder extends BaseViewHolder{
+
+        public BottomItemViewHolder(View itemView) {
+            super(itemView);
+        }
     }
 }

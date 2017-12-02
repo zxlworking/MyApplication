@@ -14,6 +14,7 @@ import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.text.TextUtils;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.FrameLayout;
@@ -37,6 +38,7 @@ import com.amap.api.maps.model.MarkerOptions;
 import com.amap.api.maps.model.MyLocationStyle;
 import com.amap.api.maps.model.PolylineOptions;
 import com.zxl.river.chief.R;
+import com.zxl.river.chief.activity.MainActivity;
 import com.zxl.river.chief.activity.UploadEventActivity;
 import com.zxl.river.chief.activity.UploadRiverActivity;
 import com.zxl.river.chief.common.Constants;
@@ -161,23 +163,7 @@ public class RiverFragment extends BaseFragment {
                         DebugUtils.d(TAG,"onClick::start_pause_river_fl::isStartRiver = " + isStartRiver);
                         if(isStartRiver){
                             //停止
-                            isStartRiver = false;
-                            mStartPauseRiverImg.setImageResource(R.mipmap.ic_start_river);
-                            addMark(R.mipmap.ic_map_stop,mLastLatLng);
-
-                            mAMapLocationClientOption.setOnceLocation(true);
-                            mAMapLocationClient.setLocationOption(mAMapLocationClientOption);
-                            mAMapLocationClient.stopLocation();
-
-                            mHandler.removeMessages(MSG_START_COUNT_RIVER_TIME);
-
-                            mRiverEndTime = new Date().getTime();
-                            mRiverEndTimeTv.setText("结束："+mRiverTimeFormat.format(new Date(mRiverEndTime)));
-
-                            mRiverInfoContentLl.setVisibility(View.GONE);
-
-                            mEndRiverContentLl.setVisibility(View.VISIBLE);
-                            mStartRiverContentFl.setVisibility(View.GONE);
+                            stopRiver(false);
 
                         }else{
                             //开始
@@ -321,6 +307,28 @@ public class RiverFragment extends BaseFragment {
             mEndRiverDateContentLl.addView(mDateItemView);
         }
 
+    }
+
+    private void stopRiver(boolean isClickBack){
+        isStartRiver = false;
+        mStartPauseRiverImg.setImageResource(R.mipmap.ic_start_river);
+        addMark(R.mipmap.ic_map_stop,mLastLatLng);
+
+        mAMapLocationClientOption.setOnceLocation(true);
+        mAMapLocationClient.setLocationOption(mAMapLocationClientOption);
+        mAMapLocationClient.stopLocation();
+
+        mHandler.removeMessages(MSG_START_COUNT_RIVER_TIME);
+
+        mRiverEndTime = new Date().getTime();
+        mRiverEndTimeTv.setText("结束："+mRiverTimeFormat.format(new Date(mRiverEndTime)));
+
+        if(isClickBack){
+            mRiverInfoContentLl.setVisibility(View.GONE);
+
+            mEndRiverContentLl.setVisibility(View.VISIBLE);
+            mStartRiverContentFl.setVisibility(View.GONE);
+        }
     }
 
     private  LocationSource mLocationSource = new LocationSource() {
@@ -498,5 +506,17 @@ public class RiverFragment extends BaseFragment {
                 mAMapLocationClient.startLocation();
             }
         }
+    }
+
+    public boolean onKeyDown(int keyCode, KeyEvent event){
+        switch (keyCode){
+            case KeyEvent.KEYCODE_BACK:
+                if(mStartRiverContentFl.getVisibility() == View.VISIBLE){
+                    stopRiver(true);
+                    return true;
+                }
+                break;
+        }
+        return false;
     }
 }

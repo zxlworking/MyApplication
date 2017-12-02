@@ -80,7 +80,7 @@ public class UploadRiverActivity extends BaseActivity {
 
         mRiverPictureGridView = (GridView) findViewById(R.id.river_picture_grid_view);
 
-        setSettingsImgVisibility(View.GONE);
+        setRightImgVisibility(View.GONE);
         setTitle("提交巡河信息");
 
         mRiverStartTimeTv = (TextView) findViewById(R.id.river_start_time_tv);
@@ -90,7 +90,7 @@ public class UploadRiverActivity extends BaseActivity {
             @Override
             public void onClick(View v) {
                 switch (v.getId()){
-                    case R.id.back_img:
+                    case R.id.title_bar_left_img:
                         finish();
                         break;
                     case R.id.add_picture_from_album_tv:

@@ -18,7 +18,7 @@
         <include
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            layout="@layout/upload_event_content_view"/>
+            layout="@layout/upload_event_head_view"/>
 
         <LinearLayout
             android:layout_width="match_parent"

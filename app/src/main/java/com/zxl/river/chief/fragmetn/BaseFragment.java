@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.zxl.river.chief.R;
@@ -21,10 +22,12 @@ public abstract class BaseFragment extends Fragment {
     public Context mContext;
     public View mContentView;
 
+    private LinearLayout mTitleBarLl;
+
     private TextView mTitleTv;
 
-    private ImageView mBackImg;
-    private ImageView mSettingsImg;
+    private ImageView mTitleBarLeftImg;
+    private ImageView mTitleBarRightImg;
 
     public View.OnClickListener mOnClickListener = null;
 
@@ -43,18 +46,19 @@ public abstract class BaseFragment extends Fragment {
     public abstract int getContentView();
 
     public void initView(View contentView,Bundle savedInstanceState){
+        mTitleBarLl = (LinearLayout) contentView.findViewById(R.id.title_bar_ll);
         mTitleTv = (TextView) contentView.findViewById(R.id.title_tv);
-        mBackImg = (ImageView) contentView.findViewById(R.id.back_img);
-        mSettingsImg = (ImageView) contentView.findViewById(R.id.settings_img);
+        mTitleBarLeftImg = (ImageView) contentView.findViewById(R.id.title_bar_left_img);
+        mTitleBarRightImg = (ImageView) contentView.findViewById(R.id.title_bar_right_img);
 
     }
     public void initData(){
         if(mOnClickListener != null){
-            if(mBackImg != null){
-                mBackImg.setOnClickListener(mOnClickListener);
+            if(mTitleBarLeftImg != null){
+                mTitleBarLeftImg.setOnClickListener(mOnClickListener);
             }
-            if(mSettingsImg != null){
-                mSettingsImg.setOnClickListener(mOnClickListener);
+            if(mTitleBarRightImg != null){
+                mTitleBarRightImg.setOnClickListener(mOnClickListener);
             }
         }
     }
@@ -65,15 +69,21 @@ public abstract class BaseFragment extends Fragment {
         }
     }
 
-    public void setBackImgVisibility(int v){
-        if(mBackImg != null){
-            mBackImg.setVisibility(v);
+    public void setTitleBarVisibility(int v){
+        if(mTitleBarLl != null){
+            mTitleBarLl.setVisibility(v);
         }
     }
 
-    public void setSettingsImgVisibility(int v){
-        if(mSettingsImg != null){
-            mSettingsImg.setVisibility(v);
+    public void setLeftImgVisibility(int v){
+        if(mTitleBarLeftImg != null){
+            mTitleBarLeftImg.setVisibility(v);
+        }
+    }
+
+    public void setRightImgVisibility(int v){
+        if(mTitleBarRightImg != null){
+            mTitleBarRightImg.setVisibility(v);
         }
     }
 

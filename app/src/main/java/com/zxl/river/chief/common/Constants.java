@@ -15,8 +15,9 @@ public class Constants {
 
     public static final String FILEPROVIDER_AUTHORITIES = "com.zxl.river.chief";
 
-    public static final String BASE_URL = "http://10.218.7.30:8080//test_web/";
+    //public static final String BASE_URL = "http://10.218.7.30:8080//test_web/";
     //public static final String BASE_URL = "http://122.152.195.124:8080/appstore/sys/";
+    public static final String BASE_URL = "http://192.168.0.119:8080/test2/";
 
     public static final String[] EVENT_TYPE_NAME = new String[]{"地质灾害","违规排污","河道垃圾"};
     public static final String[] EVENT_STATE_NAME = new String[]{"未处理","处理中","已处理"};

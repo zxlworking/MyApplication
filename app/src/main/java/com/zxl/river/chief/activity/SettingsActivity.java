@@ -28,14 +28,14 @@ public class SettingsActivity extends BaseActivity {
         super.initView();
         mLoginOutLl = (LinearLayout) findViewById(R.id.login_out_ll);
 
-        setSettingsImgVisibility(View.GONE);
+        setRightImgVisibility(View.GONE);
         setTitle("设置");
 
         mOnClickListener = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 switch (v.getId()){
-                    case R.id.back_img:
+                    case R.id.title_bar_left_img:
                         finish();
                         break;
                     case R.id.login_out_ll:

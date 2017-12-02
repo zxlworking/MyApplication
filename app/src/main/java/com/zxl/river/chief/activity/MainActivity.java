@@ -11,6 +11,7 @@ import android.os.HandlerThread;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.view.ViewPager;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -20,8 +21,11 @@ import android.widget.Toast;
 import com.zxl.river.chief.R;
 import com.zxl.river.chief.common.Constants;
 import com.zxl.river.chief.fragmetn.CountFragment;
+import com.zxl.river.chief.fragmetn.EventFragment;
 import com.zxl.river.chief.fragmetn.MeFragment;
+import com.zxl.river.chief.fragmetn.NotificationFragment;
 import com.zxl.river.chief.fragmetn.RiverFragment;
+import com.zxl.river.chief.fragmetn.SettingsFragment;
 import com.zxl.river.chief.http.HttpUtil;
 import com.zxl.river.chief.utils.CommonUtils;
 import com.zxl.river.chief.utils.DebugUtils;
@@ -74,6 +78,8 @@ public class MainActivity extends BaseActivity {
 
     private int mCurrentIndex = DEFAULT_INDEX;
 
+    private RiverFragment mRiverFragment;
+
     @Override
     public int getContentView() {
         return R.layout.main_activity;
@@ -82,11 +88,13 @@ public class MainActivity extends BaseActivity {
     @Override
     public void initView() {
         super.initView();
-        mFragments.add(new RiverFragment());
-        mFragments.add(new MeFragment());
+
+        mRiverFragment = new RiverFragment();
+        mFragments.add(mRiverFragment);
+        mFragments.add(new EventFragment());
         mFragments.add(new CountFragment());
-        mFragments.add(new MeFragment());
-        mFragments.add(new MeFragment());
+        mFragments.add(new NotificationFragment());
+        mFragments.add(new SettingsFragment());
 
 
         mRiverLl = (LinearLayout) findViewById(R.id.river_ll);
@@ -117,7 +125,8 @@ public class MainActivity extends BaseActivity {
         mViewPager.addOnPageChangeListener(mOnPageChangeListener);
         */
 
-        setBackImgVisibility(View.GONE);
+        setLeftImgVisibility(View.GONE);
+        setRightImgVisibility(View.GONE);
 
         setTab(RIVER_INDEX);
 
@@ -140,7 +149,7 @@ public class MainActivity extends BaseActivity {
                     case R.id.settings_ll:
                         setTab(SETTINGS_INDEX);
                         break;
-                    case R.id.settings_img:
+                    case R.id.title_bar_right_img:
                         Intent mSettingsIntent = new Intent(mContext,SettingsActivity.class);
                         mSettingsIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                         startActivity(mSettingsIntent);
@@ -253,6 +262,13 @@ public class MainActivity extends BaseActivity {
 
     }
 
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if(mRiverFragment.onKeyDown(keyCode,event)){
+            return true;
+        }
+        return super.onKeyDown(keyCode, event);
+    }
 
     /*
     ViewPager.OnPageChangeListener mOnPageChangeListener = new ViewPager.OnPageChangeListener() {

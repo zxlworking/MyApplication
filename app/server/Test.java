@@ -1,87 +1,32 @@
-package com.zxl.river.chief.activity;
-
-import android.os.Bundle;
-import android.os.Handler;
-import android.os.HandlerThread;
-import android.support.annotation.Nullable;
-
-import com.zxl.river.chief.R;
-import com.zxl.river.chief.http.HttpUtil;
-import com.zxl.river.chief.utils.CommonUtils;
-import com.zxl.river.chief.utils.DebugUtils;
-
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.ArrayList;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.PrintWriter;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
 
-import okhttp3.ResponseBody;
-import rx.Subscriber;
-import rx.Subscription;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
-/**
- * Created by uidq0955 on 2017/12/1.
- */
+import org.apache.tomcat.util.http.fileupload.FileItem;
+import org.apache.tomcat.util.http.fileupload.ProgressListener;
+import org.apache.tomcat.util.http.fileupload.disk.DiskFileItemFactory;
+import org.apache.tomcat.util.http.fileupload.servlet.ServletFileUpload;
 
-public class TestUploadImageActivity extends BaseActivity {
 
-    private static final String TAG = "TestUploadImageActivity";
+public class Test extends HttpServlet {
 
-    @Override
-    public int getContentView() {
-        return R.layout.test_activity;
-    }
-
-    @Override
-    public void initView() {
-
-    }
-
-    @Override
-    public void initData() {
-        CommonUtils.checkStoragePermission(mActivity);
-
-        HandlerThread mHandlerThread = new HandlerThread("test");
-        mHandlerThread.start();
-
-//        String path = "/storage/sdcard0/zxl_test_1/1024x1024/b047e.jpg";
-        String path = "/storage/emulated/0/b047e.png";
-        List<File> mFiles = new ArrayList<>();
-        File file = new File(path);
-        DebugUtils.d(TAG,"zxl--->file--->"+file.exists());
-        mFiles.add(file);
-
-        Subscription test = HttpUtil.uploadFiles(mFiles, new Handler(), new Subscriber<ResponseBody>() {
-            @Override
-            public void onStart() {
-                super.onStart();
-                DebugUtils.d(TAG,"HttpUtil.test::onStart--->"+Thread.currentThread());
-            }
-
-            @Override
-            public void onNext(ResponseBody responseBody) {
-                try {
-                    DebugUtils.d(TAG,"HttpUtil.test::onNext--->"+Thread.currentThread()+"--->"+responseBody.string());
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-
-            @Override
-            public void onError(Throwable e) {
-                DebugUtils.d(TAG,"HttpUtil.test::onError--->"+Thread.currentThread()+"--->"+e);
-            }
-
-            @Override
-            public void onCompleted() {
-                DebugUtils.d(TAG,"HttpUtil.test::onCompleted--->"+Thread.currentThread());
-            }
-        });
-    }
-}
-
-/*
-//设置编码
+	@Override
+	protected void doGet(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+		System.out.println("zxl--->Test");
+		//设置编码
         request.setCharacterEncoding("UTF-8");
         response.setContentType("text/html;charset=UTF-8");
         PrintWriter pw = response.getWriter();
@@ -89,7 +34,7 @@ public class TestUploadImageActivity extends BaseActivity {
             //设置系统环境
             DiskFileItemFactory factory = new DiskFileItemFactory();
             //文件存储的路径
-            String storePath = "D:\\test\\file";
+            String storePath = "E:\\test\\file";
             //判断传输方式  form  enctype=multipart/form-data
             boolean isMultipart = ServletFileUpload.isMultipartContent(request);
             if(!isMultipart)
@@ -123,22 +68,38 @@ public class TestUploadImageActivity extends BaseActivity {
                     if(item.isFormField()){  //普通字段，表单提交过来的
                         String name = item.getFieldName();
                         String value = item.getString("UTF-8");
-                        System.out.println(name+"=="+value);
+                        System.out.println("zxl--->para--->"+name+"=="+value);
                     }else{
 //                      String mimeType = item.getContentType(); 获取上传文件类型
 //                      if(mimeType.startsWith("image")){
-                        InputStream in =item.getInputStream();
+                        InputStream in = item.getInputStream();
                         String fileName = item.getName();
+                        System.out.println("zxl--->fileName--->"+fileName+"--->"+item.getFieldName());
                         if(fileName==null || "".equals(fileName.trim())) {
                             continue;
                         }
                         fileName = fileName.substring(fileName.lastIndexOf("\\")+1);
-                        fileName = UUID.randomUUID()+"_"+fileName;
+                        System.out.println("zxl--->fileName2--->"+fileName);
+                        //fileName = UUID.randomUUID()+"_"+fileName;
+                        
+                        fileName = ""+UUID.randomUUID();
+                        System.out.println("zxl--->fileName3--->"+fileName);
 
                         //按日期来建文件夹
 
                         String newStorePath = storePath;
                         String storeFile = newStorePath+"\\"+fileName;
+                        
+                        System.out.println("zxl--->storeFile--->"+storeFile);
+                        
+                        File mStoreFile = new File(storeFile);
+                        
+                        System.out.println("zxl--->mStoreFile.exists()--->"+mStoreFile.exists());
+                        
+                        if(!mStoreFile.exists()){
+                        	mStoreFile.createNewFile();
+                        }
+                        
                         OutputStream out = new FileOutputStream(storeFile);
                         byte[] b = new byte[1024];
                         int len = -1;
@@ -152,6 +113,16 @@ public class TestUploadImageActivity extends BaseActivity {
                   }
             }
         }catch (Exception e) {
+        	response.getWriter().write("zxl--->e--->"+e.toString());
             e.printStackTrace();
         }
-*/
+        response.getWriter().write("zxl--->ok");
+	}
+	
+	@Override
+	protected void doPost(HttpServletRequest req, HttpServletResponse resp)
+			throws ServletException, IOException {
+		// TODO Auto-generated method stub
+		doGet(req, resp);
+	}
+}
