@@ -6,6 +6,11 @@
     android:layout_height="match_parent"
     android:background="#f2f2f2">
 
+    <include
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        layout="@layout/title_bar"/>
+
     <com.github.mikephil.charting.charts.LineChart
         android:id="@+id/lineChart"
         android:layout_marginTop="24dp"

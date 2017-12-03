@@ -1,5 +1,6 @@
 package com.zxl.river.chief.activity;
 
+import android.content.Intent;
 import android.net.Uri;
 import android.nfc.Tag;
 import android.support.v7.widget.LinearLayoutManager;
@@ -19,6 +20,7 @@ import com.facebook.imagepipeline.request.ImageRequest;
 import com.facebook.imagepipeline.request.ImageRequestBuilder;
 import com.zxl.river.chief.R;
 import com.zxl.river.chief.common.BaseViewHolder;
+import com.zxl.river.chief.utils.CommonUtils;
 import com.zxl.river.chief.utils.DebugUtils;
 
 import java.util.ArrayList;
@@ -37,6 +39,9 @@ public class EventDetailActivity extends BaseActivity {
 
     private List<String> mEventPicturePaths = new ArrayList<>();
     private List<String> mEventPersonPaths = new ArrayList<>();
+
+    private int mPictureWidth = 0;
+    private int mPictureHeight = 0;
 
     @Override
     public int getContentView() {
@@ -74,6 +79,9 @@ public class EventDetailActivity extends BaseActivity {
         super.initData();
 
         DebugUtils.d(TAG,"zxl--->initData");
+
+        mPictureWidth = (CommonUtils.getScreenWidth(mContext) - 8 * 16) / 4;
+        mPictureHeight = mPictureWidth;
 
         for(int i = 0; i < 6; i++){
             mEventPicturePaths.add("--->"+i);
@@ -154,6 +162,13 @@ public class EventDetailActivity extends BaseActivity {
                 SimpleDraweeView mEventDetailPictureItemImg3 = (SimpleDraweeView) holder.findViewById(R.id.event_detail_picture_item_img_3);
                 SimpleDraweeView mEventDetailPictureItemImg4 = (SimpleDraweeView) holder.findViewById(R.id.event_detail_picture_item_img_4);
 
+//                LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(mPictureWidth,mPictureHeight);
+//                mEventDetailPictureItemImg1.setLayoutParams(lp);
+//                mEventDetailPictureItemImg2.setLayoutParams(lp);
+//                mEventDetailPictureItemImg3.setLayoutParams(lp);
+//                mEventDetailPictureItemImg4.setLayoutParams(lp);
+
+
                 if(mPictureIndex < 1){
                     mEventDetailPictureItemTopLl.setVisibility(View.VISIBLE);
                 }else{
@@ -166,7 +181,7 @@ public class EventDetailActivity extends BaseActivity {
 
                     setSimpleDraweeViewRes(mEventDetailPictureItemImg1,R.drawable.t1);
                 }else{
-                    mEventDetailPictureItemLl1.setVisibility(View.GONE);
+                    mEventDetailPictureItemLl1.setVisibility(View.INVISIBLE);
                 }
                 if(mPictureIndex * 4 + 1 < mEventPicturePaths.size()){
                     mEventDetailPictureItemLl2.setVisibility(View.VISIBLE);
@@ -174,7 +189,7 @@ public class EventDetailActivity extends BaseActivity {
 
                     setSimpleDraweeViewRes(mEventDetailPictureItemImg2,R.drawable.t2);
                 }else{
-                    mEventDetailPictureItemLl2.setVisibility(View.GONE);
+                    mEventDetailPictureItemLl2.setVisibility(View.INVISIBLE);
                 }
                 if(mPictureIndex * 4 + 2 < mEventPicturePaths.size()){
                     mEventDetailPictureItemLl3.setVisibility(View.VISIBLE);
@@ -182,7 +197,7 @@ public class EventDetailActivity extends BaseActivity {
 
                     setSimpleDraweeViewRes(mEventDetailPictureItemImg3,R.drawable.t3);
                 }else{
-                    mEventDetailPictureItemLl3.setVisibility(View.GONE);
+                    mEventDetailPictureItemLl3.setVisibility(View.INVISIBLE);
                 }
                 if(mPictureIndex * 4 + 3 < mEventPicturePaths.size()){
                     mEventDetailPictureItemLl4.setVisibility(View.VISIBLE);
@@ -190,7 +205,7 @@ public class EventDetailActivity extends BaseActivity {
 
                     setSimpleDraweeViewRes(mEventDetailPictureItemImg4,R.drawable.t4);
                 }else{
-                    mEventDetailPictureItemLl4.setVisibility(View.GONE);
+                    mEventDetailPictureItemLl4.setVisibility(View.INVISIBLE);
                 }
             }else if(holder instanceof PersonItemViewHolder){
                 SimpleDraweeView mEventDetailPersonItemImg = (SimpleDraweeView) holder.findViewById(R.id.event_detail_person_item_img);
@@ -198,13 +213,20 @@ public class EventDetailActivity extends BaseActivity {
                 int mPersonIndex = position - HEAD_COUNT - mPictureItemCount;
                 mEventDetailPersonItemImg.setImageURI(mEventPersonPaths.get(mPersonIndex));
             }else if(holder instanceof BottomItemViewHolder){
-
+                holder.getContentView().setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent mUploadEventIntent = new Intent(mContext,DealEventActivity.class);
+                        mUploadEventIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        startActivity(mUploadEventIntent);
+                    }
+                });
             }
         }
 
         private void setSimpleDraweeViewRes(SimpleDraweeView simpleDraweeViewRes,int resId){
-            int mWidth = 60;
-            int mHeight = 60;
+            int mWidth = mPictureWidth;
+            int mHeight = mPictureHeight;
             if(mWidth > 0 && mHeight > 0){
                 Uri mUri = Uri.parse("res://" + mContext.getPackageName() + "/" + resId);
                 ImageRequest request = ImageRequestBuilder.newBuilderWithSource(mUri)

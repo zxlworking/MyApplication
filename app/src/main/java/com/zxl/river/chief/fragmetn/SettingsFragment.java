@@ -14,6 +14,7 @@ import android.widget.TextView;
 
 import com.zxl.river.chief.R;
 import com.zxl.river.chief.activity.LoginActivity;
+import com.zxl.river.chief.activity.ModifyPasswordActivity;
 import com.zxl.river.chief.preference.Preference;
 import com.zxl.river.chief.utils.ActivityManager;
 
@@ -25,6 +26,7 @@ public class SettingsFragment extends BaseFragment {
 
     private static final int[] RIVER_RATE_ARRAY = new int[]{1,2,3,4,5,10};
 
+    private LinearLayout mModifyPasswordLl;
     private LinearLayout mLoginOutLl;
 
     private Spinner mRiverRateSpinner;
@@ -38,6 +40,8 @@ public class SettingsFragment extends BaseFragment {
     @Override
     public void initView(View contentView, Bundle savedInstanceState) {
         super.initView(contentView,savedInstanceState);
+
+        mModifyPasswordLl = (LinearLayout) contentView.findViewById(R.id.modify_password_ll);
         mLoginOutLl = (LinearLayout) contentView.findViewById(R.id.login_out_ll);
 
         mRiverRateSpinner = (Spinner) contentView.findViewById(R.id.river_rate_spinner);
@@ -46,20 +50,27 @@ public class SettingsFragment extends BaseFragment {
             @Override
             public void onClick(View v) {
                 switch (v.getId()){
+                    case R.id.modify_password_ll:
+                        Intent mModifyPasswordIntent = new Intent(mContext,ModifyPasswordActivity.class);
+                        mModifyPasswordIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        startActivity(mModifyPasswordIntent);
+                        break;
                     case R.id.login_out_ll:
                         Preference.getInstance(mContext).setRememberMe(false);
                         Preference.getInstance(mContext).setUserName("");
                         Preference.getInstance(mContext).setPassWord("");
 
-                        Intent mSettingsIntent = new Intent(mContext,LoginActivity.class);
-                        mSettingsIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                        startActivity(mSettingsIntent);
+                        Intent mLoginOutIntent = new Intent(mContext,LoginActivity.class);
+                        mLoginOutIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        startActivity(mLoginOutIntent);
 
                         ActivityManager.getInstance().finishAllActivity();
                         break;
                 }
             }
         };
+
+        mModifyPasswordLl.setOnClickListener(mOnClickListener);
         mLoginOutLl.setOnClickListener(mOnClickListener);
 
         mRiverRateSpinner.setAdapter(new RiverRateAdatper());

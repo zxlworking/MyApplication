@@ -30,7 +30,23 @@ public class CountFragment extends BaseFragment {
     @Override
     public void initView(View contentView, Bundle savedInstanceState) {
         super.initView(contentView,savedInstanceState);
+
+        setTitleBarVisibility(View.VISIBLE);
+        setTitle("统计");
+        setRightImgVisibility(View.GONE);
+
         lineChart = (LineChart)contentView.findViewById(R.id.lineChart);
+
+        mOnClickListener = new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                switch (v.getId()){
+                    case R.id.title_bar_left_img:
+                        getActivity().finish();
+                        break;
+                }
+            }
+        };
     }
 
     @Override

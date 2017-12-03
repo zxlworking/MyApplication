@@ -40,12 +40,16 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:paddingLeft="16dp"
+        android:padding="16dp"
+        android:paddingBottom="16dp"
         android:orientation="horizontal">
 
         <LinearLayout
             android:id="@+id/upload_event_picture_item_ll_1"
-            android:layout_width="96dp"
-            android:layout_height="96dp"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
             android:orientation="vertical"
             android:gravity="center_horizontal">
 
@@ -55,15 +59,27 @@
                 android:layout_weight="1"
                 android:orientation="horizontal"/>
 
-            <com.facebook.drawee.view.SimpleDraweeView
-                android:id="@+id/upload_event_picture_item_img_1"
-                android:layout_width="60dp"
-                android:layout_height="60dp"
-                fresco:placeholderImage="@mipmap/ic_launcher"
-                fresco:placeholderImageScaleType="fitCenter"
-                fresco:failureImage="@mipmap/ic_launcher"
-                fresco:failureImageScaleType="fitCenter"
-                fresco:actualImageScaleType="fitCenter"/>
+            <FrameLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+                <com.facebook.drawee.view.SimpleDraweeView
+                    android:id="@+id/upload_event_picture_item_img_1"
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    fresco:placeholderImage="@mipmap/ic_launcher"
+                    fresco:placeholderImageScaleType="fitCenter"
+                    fresco:failureImage="@mipmap/ic_launcher"
+                    fresco:failureImageScaleType="fitCenter"
+                    fresco:actualImageScaleType="fitCenter"/>
+                <ImageView
+                    android:id="@+id/upload_event_picture_item_delete_img_1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="right"
+                    android:src="@mipmap/ic_delete_tips"
+                    android:scaleType="fitCenter"
+                    android:visibility="gone"/>
+            </FrameLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -74,8 +90,9 @@
 
         <LinearLayout
             android:id="@+id/upload_event_picture_item_ll_2"
-            android:layout_width="96dp"
-            android:layout_height="96dp"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
             android:orientation="vertical"
             android:gravity="center_horizontal">
 
@@ -85,15 +102,27 @@
                 android:layout_weight="1"
                 android:orientation="horizontal"/>
 
-            <com.facebook.drawee.view.SimpleDraweeView
-                android:id="@+id/upload_event_picture_item_img_2"
-                android:layout_width="60dp"
-                android:layout_height="60dp"
-                fresco:placeholderImage="@mipmap/ic_launcher"
-                fresco:placeholderImageScaleType="fitCenter"
-                fresco:failureImage="@mipmap/ic_launcher"
-                fresco:failureImageScaleType="fitCenter"
-                fresco:actualImageScaleType="fitCenter"/>
+            <FrameLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+                <com.facebook.drawee.view.SimpleDraweeView
+                    android:id="@+id/upload_event_picture_item_img_2"
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    fresco:placeholderImage="@mipmap/ic_launcher"
+                    fresco:placeholderImageScaleType="fitCenter"
+                    fresco:failureImage="@mipmap/ic_launcher"
+                    fresco:failureImageScaleType="fitCenter"
+                    fresco:actualImageScaleType="fitCenter"/>
+                <ImageView
+                    android:id="@+id/upload_event_picture_item_delete_img_2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="right"
+                    android:src="@mipmap/ic_delete_tips"
+                    android:scaleType="fitCenter"
+                    android:visibility="gone"/>
+            </FrameLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -104,8 +133,9 @@
 
         <LinearLayout
             android:id="@+id/upload_event_picture_item_ll_3"
-            android:layout_width="96dp"
-            android:layout_height="96dp"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
             android:orientation="vertical"
             android:gravity="center_horizontal">
 
@@ -115,15 +145,27 @@
                 android:layout_weight="1"
                 android:orientation="horizontal"/>
 
-            <com.facebook.drawee.view.SimpleDraweeView
-                android:id="@+id/upload_event_picture_item_img_3"
-                android:layout_width="60dp"
-                android:layout_height="60dp"
-                fresco:placeholderImage="@mipmap/ic_launcher"
-                fresco:placeholderImageScaleType="fitCenter"
-                fresco:failureImage="@mipmap/ic_launcher"
-                fresco:failureImageScaleType="fitCenter"
-                fresco:actualImageScaleType="fitCenter"/>
+            <FrameLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+                <com.facebook.drawee.view.SimpleDraweeView
+                    android:id="@+id/upload_event_picture_item_img_3"
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    fresco:placeholderImage="@mipmap/ic_launcher"
+                    fresco:placeholderImageScaleType="fitCenter"
+                    fresco:failureImage="@mipmap/ic_launcher"
+                    fresco:failureImageScaleType="fitCenter"
+                    fresco:actualImageScaleType="fitCenter"/>
+                <ImageView
+                    android:id="@+id/upload_event_picture_item_delete_img_3"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="right"
+                    android:src="@mipmap/ic_delete_tips"
+                    android:scaleType="fitCenter"
+                    android:visibility="gone"/>
+            </FrameLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -134,8 +176,9 @@
 
         <LinearLayout
             android:id="@+id/upload_event_picture_item_ll_4"
-            android:layout_width="96dp"
-            android:layout_height="96dp"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
             android:orientation="vertical"
             android:gravity="center_horizontal">
 
@@ -145,15 +188,27 @@
                 android:layout_weight="1"
                 android:orientation="horizontal"/>
 
-            <com.facebook.drawee.view.SimpleDraweeView
-                android:id="@+id/upload_event_picture_item_img_4"
-                android:layout_width="60dp"
-                android:layout_height="60dp"
-                fresco:placeholderImage="@mipmap/ic_launcher"
-                fresco:placeholderImageScaleType="fitCenter"
-                fresco:failureImage="@mipmap/ic_launcher"
-                fresco:failureImageScaleType="fitCenter"
-                fresco:actualImageScaleType="fitCenter"/>
+            <FrameLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+                <com.facebook.drawee.view.SimpleDraweeView
+                    android:id="@+id/upload_event_picture_item_img_4"
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    fresco:placeholderImage="@mipmap/ic_launcher"
+                    fresco:placeholderImageScaleType="fitCenter"
+                    fresco:failureImage="@mipmap/ic_launcher"
+                    fresco:failureImageScaleType="fitCenter"
+                    fresco:actualImageScaleType="fitCenter"/>
+                <ImageView
+                    android:id="@+id/upload_event_picture_item_delete_img_4"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="right"
+                    android:src="@mipmap/ic_delete_tips"
+                    android:scaleType="fitCenter"
+                    android:visibility="gone"/>
+            </FrameLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"

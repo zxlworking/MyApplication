@@ -24,6 +24,7 @@ import com.zxl.river.chief.fragmetn.CountFragment;
 import com.zxl.river.chief.fragmetn.EventFragment;
 import com.zxl.river.chief.fragmetn.MeFragment;
 import com.zxl.river.chief.fragmetn.NotificationFragment;
+import com.zxl.river.chief.fragmetn.RecordFragment;
 import com.zxl.river.chief.fragmetn.RiverFragment;
 import com.zxl.river.chief.fragmetn.SettingsFragment;
 import com.zxl.river.chief.http.HttpUtil;
@@ -45,11 +46,11 @@ public class MainActivity extends BaseActivity {
     private static final int DEFAULT_INDEX = -1;
     private static final int RIVER_INDEX = 0;
     private static final int EVENT_INDEX = 1;
-    private static final int COUNT_INDEX = 2;
+    private static final int RECORD_INDEX = 2;
     private static final int NOTIFICATION_INDEX = 3;
     private static final int SETTINGS_INDEX = 4;
 
-    private static final String[] TITLE_ARRAY = new String[]{"巡河","事件","统计","通知","设置"};
+    private static final String[] TITLE_ARRAY = new String[]{"巡河","事件","日志","通知","设置"};
 
     private ViewPager mViewPager;
 
@@ -59,20 +60,20 @@ public class MainActivity extends BaseActivity {
 
     private LinearLayout mRiverLl;
     private LinearLayout mEventLl;
-    private LinearLayout mCountLl;
+    private LinearLayout mRecordLl;
     private LinearLayout mNotificationLl;
     private LinearLayout mSettingsLl;
 
     private ImageView mRiverImg;
     private ImageView mEventImg;
-    private ImageView mCountImg;
+    private ImageView mRecordImg;
     private ImageView mNotificationImg;
     private ImageView mMainSettingsImg;
 
 
     private TextView mRiverTv;
     private TextView mEventTv;
-    private TextView mCountTv;
+    private TextView mRecordTv;
     private TextView mNotificationTv;
     private TextView mSettingsTv;
 
@@ -92,27 +93,27 @@ public class MainActivity extends BaseActivity {
         mRiverFragment = new RiverFragment();
         mFragments.add(mRiverFragment);
         mFragments.add(new EventFragment());
-        mFragments.add(new CountFragment());
+        mFragments.add(new RecordFragment());
         mFragments.add(new NotificationFragment());
         mFragments.add(new SettingsFragment());
 
 
         mRiverLl = (LinearLayout) findViewById(R.id.river_ll);
         mEventLl = (LinearLayout) findViewById(R.id.event_ll);
-        mCountLl = (LinearLayout) findViewById(R.id.count_ll);
+        mRecordLl = (LinearLayout) findViewById(R.id.record_ll);
         mNotificationLl = (LinearLayout) findViewById(R.id.notification_ll);
         mSettingsLl = (LinearLayout) findViewById(R.id.settings_ll);
 
         mRiverImg = (ImageView) findViewById(R.id.river_img);
         mEventImg = (ImageView) findViewById(R.id.event_img);
-        mCountImg = (ImageView) findViewById(R.id.count_img);
+        mRecordImg = (ImageView) findViewById(R.id.record_img);
         mNotificationImg = (ImageView) findViewById(R.id.notification_img);
         mMainSettingsImg = (ImageView) findViewById(R.id.main_settings_img);
 
 
         mRiverTv = (TextView) findViewById(R.id.river_tv);
         mEventTv = (TextView) findViewById(R.id.event_tv);
-        mCountTv = (TextView) findViewById(R.id.count_tv);
+        mRecordTv = (TextView) findViewById(R.id.record_tv);
         mNotificationTv = (TextView) findViewById(R.id.notification_tv);
         mSettingsTv = (TextView) findViewById(R.id.settings_tv);
 
@@ -140,8 +141,8 @@ public class MainActivity extends BaseActivity {
                     case R.id.event_ll:
                         setTab(EVENT_INDEX);
                         break;
-                    case R.id.count_ll:
-                        setTab(COUNT_INDEX);
+                    case R.id.record_ll:
+                        setTab(RECORD_INDEX);
                         break;
                     case R.id.notification_ll:
                         setTab(NOTIFICATION_INDEX);
@@ -150,9 +151,16 @@ public class MainActivity extends BaseActivity {
                         setTab(SETTINGS_INDEX);
                         break;
                     case R.id.title_bar_right_img:
-                        Intent mSettingsIntent = new Intent(mContext,SettingsActivity.class);
-                        mSettingsIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                        startActivity(mSettingsIntent);
+                        if(mCurrentIndex == EVENT_INDEX){
+                            Intent mUploadEventIntent = new Intent(mContext,UploadEventActivity.class);
+                            mUploadEventIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                            startActivity(mUploadEventIntent);
+                        }
+                        if(mCurrentIndex == RECORD_INDEX){
+                            Intent mUploadEventIntent = new Intent(mContext,CountActivity.class);
+                            mUploadEventIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                            startActivity(mUploadEventIntent);
+                        }
                         break;
                 }
             }
@@ -160,7 +168,7 @@ public class MainActivity extends BaseActivity {
 
         mRiverLl.setOnClickListener(mOnClickListener);
         mEventLl.setOnClickListener(mOnClickListener);
-        mCountLl.setOnClickListener(mOnClickListener);
+        mRecordLl.setOnClickListener(mOnClickListener);
         mNotificationLl.setOnClickListener(mOnClickListener);
         mSettingsLl.setOnClickListener(mOnClickListener);
     }
@@ -226,12 +234,20 @@ public class MainActivity extends BaseActivity {
         }
         mFragmentTransaction.commit();
 
+        if(mCurrentIndex == RECORD_INDEX){
+            setRightImgRes(R.mipmap.ic_count_selected);
+        }else if(mCurrentIndex == EVENT_INDEX){
+            setRightImgRes(R.mipmap.ic_upload_event_info);
+        }else{
+            setRightImgVisibility(View.GONE);
+        }
+
         mRiverImg.setImageResource(index != RIVER_INDEX ? R.mipmap.ic_river_normal : R.mipmap.ic_river_selected);
         mRiverTv.setTextColor(index != RIVER_INDEX ? Color.parseColor("#909090") : Color.parseColor("#199bff"));
         mEventImg.setImageResource(index != EVENT_INDEX ? R.mipmap.ic_event_normal : R.mipmap.ic_event_selected);
         mEventTv.setTextColor(index != EVENT_INDEX ? Color.parseColor("#909090") : Color.parseColor("#199bff"));
-        mCountImg.setImageResource(index != COUNT_INDEX ? R.mipmap.ic_count_normal : R.mipmap.ic_count_selected);
-        mCountTv.setTextColor(index != COUNT_INDEX ? Color.parseColor("#909090") : Color.parseColor("#199bff"));
+        mRecordImg.setImageResource(index != RECORD_INDEX ? R.mipmap.ic_event_normal : R.mipmap.ic_event_selected);
+        mRecordTv.setTextColor(index != RECORD_INDEX ? Color.parseColor("#909090") : Color.parseColor("#199bff"));
         mNotificationImg.setImageResource(index != NOTIFICATION_INDEX ? R.mipmap.ic_notification_normal : R.mipmap.ic_notification_selected);
         mNotificationTv.setTextColor(index != NOTIFICATION_INDEX ? Color.parseColor("#909090") : Color.parseColor("#199bff"));
         mMainSettingsImg.setImageResource(index != SETTINGS_INDEX ? R.mipmap.ic_settings_normal : R.mipmap.ic_settings_selected);

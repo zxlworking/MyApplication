@@ -87,4 +87,11 @@ public abstract class BaseFragment extends Fragment {
         }
     }
 
+    public void setRightImgRes(int resId){
+        if(mTitleBarRightImg != null){
+            mTitleBarRightImg.setVisibility(View.VISIBLE);
+            mTitleBarRightImg.setImageResource(resId);
+        }
+    }
+
 }

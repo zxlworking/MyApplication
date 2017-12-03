@@ -39,7 +39,7 @@ public abstract class BaseActivity extends Activity {
         mContext = this;
         mActivity = this;
 
-        initView();
+        initView(savedInstanceState);
         initData();
     }
 
@@ -52,12 +52,18 @@ public abstract class BaseActivity extends Activity {
 
     public abstract int getContentView();
 
+    public void initView(Bundle savedInstanceState){
+        initView();
+
+    }
+
     public void initView(){
         mTitleTv = (TextView) findViewById(R.id.title_tv);
         mTitleBarLeftImg = (ImageView) findViewById(R.id.title_bar_left_img);
         mTitleBarRightImg = (ImageView) findViewById(R.id.title_bar_right_img);
 
     }
+
     public void initData(){
         if(mTitleBarLeftImg != null){
             mTitleBarLeftImg.setOnClickListener(mOnClickListener);
@@ -82,6 +88,13 @@ public abstract class BaseActivity extends Activity {
     public void setRightImgVisibility(int v){
         if(mTitleBarRightImg != null){
             mTitleBarRightImg.setVisibility(v);
+        }
+    }
+
+    public void setRightImgRes(int resId){
+        if(mTitleBarRightImg != null){
+            mTitleBarRightImg.setVisibility(View.VISIBLE);
+            mTitleBarRightImg.setImageResource(resId);
         }
     }
 }

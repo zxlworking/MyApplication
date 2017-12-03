@@ -10,6 +10,7 @@ import android.support.annotation.NonNull;
 import android.support.v4.content.FileProvider;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -67,6 +68,12 @@ public class UploadEventActivity extends BaseActivity {
     private String mCurrentCropPhotoPath = "";
     private int mOutPutX = 480;
     private int mOutPutY = 480;
+
+    private int mPictureWidth = 0;
+    private int mPictureHeight = 0;
+
+    private boolean isDeletePictureMode = false;
+    private boolean isDeletePersonMode = false;
 
     @Override
     public int getContentView() {
@@ -129,12 +136,15 @@ public class UploadEventActivity extends BaseActivity {
         mOutPutX = CommonUtils.getScreenWidth(mContext);
         mOutPutY = CommonUtils.getScreenHeight(mContext);
 
+        mPictureWidth = (CommonUtils.getScreenWidth(mContext) - 8 * 16) / 4;
+        mPictureHeight = mPictureWidth;
 
-        mEventPersonPaths.add("http://img3.duitang.com/uploads/item/201511/13/20151113110644_PcSFj.thumb.224_0.jpeg");
-        mEventPersonPaths.add("http://diy.qqjay.com/u2/2014/1130/6272576897a2e42385ddbcf41435d938.jpg");
-        mEventPersonPaths.add("http://www.feizl.com/upload2007/2014_01/140116182482507.jpg");
-        mEventPersonPaths.add("http://img2.imgtn.bdimg.com/it/u=3746075707,1914896074&fm=214&gp=0.jpg");
-        mEventPersonPaths.add("http://img3.imgtn.bdimg.com/it/u=2777008330,1289798081&fm=27&gp=0.jpg");
+
+//        mEventPersonPaths.add("http://img3.duitang.com/uploads/item/201511/13/20151113110644_PcSFj.thumb.224_0.jpeg");
+//        mEventPersonPaths.add("http://diy.qqjay.com/u2/2014/1130/6272576897a2e42385ddbcf41435d938.jpg");
+//        mEventPersonPaths.add("http://www.feizl.com/upload2007/2014_01/140116182482507.jpg");
+//        mEventPersonPaths.add("http://img2.imgtn.bdimg.com/it/u=3746075707,1914896074&fm=214&gp=0.jpg");
+//        mEventPersonPaths.add("http://img3.imgtn.bdimg.com/it/u=2777008330,1289798081&fm=27&gp=0.jpg");
         mUploadEventAdapter.notifyDataSetChanged();
 
     }
@@ -295,6 +305,9 @@ public class UploadEventActivity extends BaseActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
+        DebugUtils.d(TAG,"onActivityResult::requestCode = " + requestCode);
+        DebugUtils.d(TAG,"onActivityResult::resultCode = " + resultCode);
+
         if (resultCode == RESULT_OK) {
             switch (requestCode) {
                 case CODE_CAMERA_REQUEST://拍照完成回调
@@ -335,6 +348,14 @@ public class UploadEventActivity extends BaseActivity {
                 case CODE_RESULT_REQUEST:
                     DebugUtils.d(TAG,"onActivityResult::CODE_RESULT_REQUEST::data = " + data.getData());
                     break;
+                case PersonListActivity.CODE_PERSON_LIST_REQUEST:
+                    String mPersonPath = data.getStringExtra(PersonListActivity.EXTRA_PERSON_LIST);
+                    DebugUtils.d(TAG,"onActivityResult::CODE_PERSON_LIST_REQUEST::mPersonPath = " + mPersonPath);
+                    if(!TextUtils.isEmpty(mPersonPath) && !mEventPersonPaths.contains(mPersonPath)){
+                        mEventPersonPaths.add(mPersonPath);
+                        mUploadEventAdapter.notifyDataSetChanged();
+                    }
+                    break;
             }
         }
     }
@@ -359,8 +380,8 @@ public class UploadEventActivity extends BaseActivity {
 
         @Override
         public int getItemViewType(int position) {
-            int mPictureItemCount = mEventPicturePaths.size() / 4 + (mEventPicturePaths.size() % 4 != 0 ? 1 : 0) + 1;
-            int mPersonItemCount = mEventPersonPaths.size() / 4 + (mEventPersonPaths.size() % 4 != 0 ? 1 : 0) + 1;
+            int mPictureItemCount = (mEventPicturePaths.size() + 1) / 4 + ((mEventPicturePaths.size() + 1) % 4 != 0 ? 1 : 0);
+            int mPersonItemCount = (mEventPersonPaths.size() + 1) / 4 + ((mEventPersonPaths.size() + 1) % 4 != 0 ? 1 : 0);
             if(position < HEAD_COUNT){
                 return HEAD_ITEM_TYPE;
             }else if(position < HEAD_COUNT + mPictureItemCount){
@@ -375,8 +396,8 @@ public class UploadEventActivity extends BaseActivity {
 
         @Override
         public int getItemCount() {
-            int mPictureItemCount = mEventPicturePaths.size() / 4 + (mEventPicturePaths.size() % 4 != 0 ? 1 : 0) + 1;
-            int mPersonItemCount = mEventPersonPaths.size() / 4 + (mEventPersonPaths.size() % 4 != 0 ? 1 : 0) + 1;
+            int mPictureItemCount = (mEventPicturePaths.size() + 1) / 4 + ((mEventPicturePaths.size() + 1) % 4 != 0 ? 1 : 0);
+            int mPersonItemCount = (mEventPersonPaths.size() + 1) / 4 + ((mEventPersonPaths.size() + 1) % 4 != 0 ? 1 : 0);
             int mCount = HEAD_COUNT +
                     mPictureItemCount +
                     mPersonItemCount +
@@ -408,7 +429,7 @@ public class UploadEventActivity extends BaseActivity {
             if(holder instanceof HeadItemViewHolder){
 
             }else if(holder instanceof PictureItemViewHolder){
-                int mPictureIndex = position - HEAD_COUNT;
+                final int mPictureIndex = position - HEAD_COUNT;
                 LinearLayout mUploadEventPictureItemTopLl = (LinearLayout) holder.findViewById(R.id.upload_event_picture_item_top_ll);
                 LinearLayout mUploadEventPictureItemLl1 = (LinearLayout) holder.findViewById(R.id.upload_event_picture_item_ll_1);
                 LinearLayout mUploadEventPictureItemLl2 = (LinearLayout) holder.findViewById(R.id.upload_event_picture_item_ll_2);
@@ -418,6 +439,16 @@ public class UploadEventActivity extends BaseActivity {
                 SimpleDraweeView mUploadEventPictureItemImg2 = (SimpleDraweeView) holder.findViewById(R.id.upload_event_picture_item_img_2);
                 SimpleDraweeView mUploadEventPictureItemImg3 = (SimpleDraweeView) holder.findViewById(R.id.upload_event_picture_item_img_3);
                 SimpleDraweeView mUploadEventPictureItemImg4 = (SimpleDraweeView) holder.findViewById(R.id.upload_event_picture_item_img_4);
+                ImageView mUploadEventPictureItemDeleteImg1 = (ImageView) holder.findViewById(R.id.upload_event_picture_item_delete_img_1);
+                ImageView mUploadEventPictureItemDeleteImg2 = (ImageView) holder.findViewById(R.id.upload_event_picture_item_delete_img_2);
+                ImageView mUploadEventPictureItemDeleteImg3 = (ImageView) holder.findViewById(R.id.upload_event_picture_item_delete_img_3);
+                ImageView mUploadEventPictureItemDeleteImg4 = (ImageView) holder.findViewById(R.id.upload_event_picture_item_delete_img_4);
+
+//                LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(mPictureWidth,mPictureHeight);
+//                mUploadEventPictureItemImg1.setLayoutParams(lp);
+//                mUploadEventPictureItemImg2.setLayoutParams(lp);
+//                mUploadEventPictureItemImg3.setLayoutParams(lp);
+//                mUploadEventPictureItemImg4.setLayoutParams(lp);
 
                 if(mPictureIndex < 1){
                     mUploadEventPictureItemTopLl.setVisibility(View.VISIBLE);
@@ -425,67 +456,14 @@ public class UploadEventActivity extends BaseActivity {
                     mUploadEventPictureItemTopLl.setVisibility(View.GONE);
                 }
 
-                if(mPictureIndex * 4 < mEventPicturePaths.size()){
-                    mUploadEventPictureItemLl1.setVisibility(View.VISIBLE);
 
-                    setSimpleDraweeViewLocalPath(mUploadEventPictureItemImg1,mEventPicturePaths.get(mPictureIndex * 4));
-                }else if(mPictureIndex * 4 == mEventPicturePaths.size()){
-                    mUploadEventPictureItemLl1.setVisibility(View.VISIBLE);
+                doForPictureItemView(mPictureIndex * 4,mUploadEventPictureItemLl1,mUploadEventPictureItemImg1,mUploadEventPictureItemDeleteImg1);
+                doForPictureItemView(mPictureIndex * 4 + 1,mUploadEventPictureItemLl2,mUploadEventPictureItemImg2,mUploadEventPictureItemDeleteImg2);
+                doForPictureItemView(mPictureIndex * 4 + 2,mUploadEventPictureItemLl3,mUploadEventPictureItemImg3,mUploadEventPictureItemDeleteImg3);
+                doForPictureItemView(mPictureIndex * 4 + 3,mUploadEventPictureItemLl4,mUploadEventPictureItemImg4,mUploadEventPictureItemDeleteImg4);
 
-                    setSimpleDraweeViewRes(mUploadEventPictureItemImg1,R.drawable.ic_add_picture);
-                }else{
-                    mUploadEventPictureItemLl1.setVisibility(View.GONE);
-                }
-
-                if(mPictureIndex * 4 + 1 < mEventPicturePaths.size()){
-                    mUploadEventPictureItemLl2.setVisibility(View.VISIBLE);
-
-                    setSimpleDraweeViewLocalPath(mUploadEventPictureItemImg2,mEventPicturePaths.get(mPictureIndex * 4 + 1));
-                }else if(mPictureIndex * 4 + 1 == mEventPicturePaths.size()){
-                    mUploadEventPictureItemLl2.setVisibility(View.VISIBLE);
-
-                    setSimpleDraweeViewRes(mUploadEventPictureItemImg2,R.drawable.ic_add_picture);
-                }else{
-                    mUploadEventPictureItemLl2.setVisibility(View.GONE);
-                }
-
-                if(mPictureIndex * 4 + 2 < mEventPicturePaths.size()){
-                    mUploadEventPictureItemLl3.setVisibility(View.VISIBLE);
-
-                    setSimpleDraweeViewLocalPath(mUploadEventPictureItemImg3,mEventPicturePaths.get(mPictureIndex * 4 + 2));
-                }else if(mPictureIndex * 4 + 2 == mEventPicturePaths.size()){
-                    mUploadEventPictureItemLl3.setVisibility(View.VISIBLE);
-
-                    setSimpleDraweeViewRes(mUploadEventPictureItemImg3,R.drawable.ic_add_picture);
-                }else{
-                    mUploadEventPictureItemLl3.setVisibility(View.GONE);
-                }
-
-                if(mPictureIndex * 4 + 3 < mEventPicturePaths.size()){
-                    mUploadEventPictureItemLl4.setVisibility(View.VISIBLE);
-
-                    setSimpleDraweeViewLocalPath(mUploadEventPictureItemImg4,mEventPicturePaths.get(mPictureIndex * 4 + 3));
-                }else if(mPictureIndex * 4 + 3 == mEventPicturePaths.size()){
-                    mUploadEventPictureItemLl4.setVisibility(View.VISIBLE);
-
-                    setSimpleDraweeViewRes(mUploadEventPictureItemImg4,R.drawable.ic_add_picture);
-                }else{
-                    mUploadEventPictureItemLl4.setVisibility(View.GONE);
-                }
-
-                if(mPictureIndex * 4 == mEventPicturePaths.size() ||
-                        mPictureIndex * 4 + 1 == mEventPicturePaths.size() ||
-                        mPictureIndex * 4 + 2 == mEventPicturePaths.size() ||
-                        mPictureIndex * 4 + 3 == mEventPicturePaths.size()){
-                    holder.getContentView().setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            mAddPictureTipsLl.setVisibility(View.VISIBLE);
-                        }
-                    });
-                }
             }else if(holder instanceof PersonItemViewHolder){
-                int mPictureItemCount = mEventPicturePaths.size() / 4 + (mEventPicturePaths.size() % 4 != 0 ? 1 : 0) + 1;
+                int mPictureItemCount = (mEventPicturePaths.size() + 1) / 4 + ((mEventPicturePaths.size() + 1) % 4 != 0 ? 1 : 0);
                 int mPersonIndex = position - HEAD_COUNT - mPictureItemCount;
                 LinearLayout mUploadEventPersonItemTopLl = (LinearLayout) holder.findViewById(R.id.upload_event_person_item_top_ll);
                 LinearLayout mUploadEventPersonItemLl1 = (LinearLayout) holder.findViewById(R.id.upload_event_person_item_ll_1);
@@ -496,6 +474,10 @@ public class UploadEventActivity extends BaseActivity {
                 SimpleDraweeView mUploadEventPersonItemImg2 = (SimpleDraweeView) holder.findViewById(R.id.upload_event_person_item_img_2);
                 SimpleDraweeView mUploadEventPersonItemImg3 = (SimpleDraweeView) holder.findViewById(R.id.upload_event_person_item_img_3);
                 SimpleDraweeView mUploadEventPersonItemImg4 = (SimpleDraweeView) holder.findViewById(R.id.upload_event_person_item_img_4);
+                ImageView mUploadEventPersonItemDeleteImg1 = (ImageView) holder.findViewById(R.id.upload_event_person_item_delete_img_1);
+                ImageView mUploadEventPersonItemDeleteImg2 = (ImageView) holder.findViewById(R.id.upload_event_person_item_delete_img_2);
+                ImageView mUploadEventPersonItemDeleteImg3 = (ImageView) holder.findViewById(R.id.upload_event_person_item_delete_img_3);
+                ImageView mUploadEventPersonItemDeleteImg4 = (ImageView) holder.findViewById(R.id.upload_event_person_item_delete_img_4);
 
                 if(mPersonIndex < 1){
                     mUploadEventPersonItemTopLl.setVisibility(View.VISIBLE);
@@ -503,61 +485,141 @@ public class UploadEventActivity extends BaseActivity {
                     mUploadEventPersonItemTopLl.setVisibility(View.GONE);
                 }
 
-                if(mPersonIndex * 4 < mEventPersonPaths.size()){
-                    mUploadEventPersonItemLl1.setVisibility(View.VISIBLE);
+                doForPersonItemView(mPersonIndex * 4,mUploadEventPersonItemLl1,mUploadEventPersonItemImg1,mUploadEventPersonItemDeleteImg1);
+                doForPersonItemView(mPersonIndex * 4 + 1,mUploadEventPersonItemLl2,mUploadEventPersonItemImg2,mUploadEventPersonItemDeleteImg2);
+                doForPersonItemView(mPersonIndex * 4 + 2,mUploadEventPersonItemLl3,mUploadEventPersonItemImg3,mUploadEventPersonItemDeleteImg3);
+                doForPersonItemView(mPersonIndex * 4 + 3,mUploadEventPersonItemLl4,mUploadEventPersonItemImg4,mUploadEventPersonItemDeleteImg4);
 
-                    mUploadEventPersonItemImg1.setImageURI(mEventPersonPaths.get(mPersonIndex));
-                }else if(mPersonIndex * 4 == mEventPersonPaths.size()){
-                    mUploadEventPersonItemLl1.setVisibility(View.VISIBLE);
 
-                    setSimpleDraweeViewRes(mUploadEventPersonItemImg1,R.drawable.ic_add_picture);
-                }else{
-                    mUploadEventPersonItemLl1.setVisibility(View.GONE);
-                }
-
-                if(mPersonIndex * 4 + 1 < mEventPersonPaths.size()){
-                    mUploadEventPersonItemLl2.setVisibility(View.VISIBLE);
-
-                    mUploadEventPersonItemImg2.setImageURI(mEventPersonPaths.get(mPersonIndex * 4 + 1));
-                }else if(mPersonIndex * 4 + 1 == mEventPersonPaths.size()){
-                    mUploadEventPersonItemLl2.setVisibility(View.VISIBLE);
-
-                    setSimpleDraweeViewRes(mUploadEventPersonItemImg2,R.drawable.ic_add_picture);
-                }else{
-                    mUploadEventPersonItemLl2.setVisibility(View.GONE);
-                }
-
-                if(mPersonIndex * 4 + 2 < mEventPersonPaths.size()){
-                    mUploadEventPersonItemLl3.setVisibility(View.VISIBLE);
-
-                    mUploadEventPersonItemImg3.setImageURI(mEventPersonPaths.get(mPersonIndex * 4 + 2));
-                }else if(mPersonIndex * 4 + 2 == mEventPersonPaths.size()){
-                    mUploadEventPersonItemLl3.setVisibility(View.VISIBLE);
-
-                    setSimpleDraweeViewRes(mUploadEventPersonItemImg3,R.drawable.ic_add_picture);
-                }else{
-                    mUploadEventPersonItemLl3.setVisibility(View.GONE);
-                }
-
-                if(mPersonIndex * 4 + 3 < mEventPersonPaths.size()){
-                    mUploadEventPersonItemLl4.setVisibility(View.VISIBLE);
-
-                    mUploadEventPersonItemImg4.setImageURI(mEventPersonPaths.get(mPersonIndex * 4 + 3));
-                }else if(mPersonIndex * 4 + 3 == mEventPersonPaths.size()){
-                    mUploadEventPersonItemLl4.setVisibility(View.VISIBLE);
-
-                    setSimpleDraweeViewRes(mUploadEventPersonItemImg4,R.drawable.ic_add_picture);
-                }else{
-                    mUploadEventPersonItemLl4.setVisibility(View.GONE);
-                }
             }else if(holder instanceof BottomItemViewHolder){
 
             }
         }
 
+        private void doForPictureItemView(final int pictureItemIndex, View pictureItemLl, SimpleDraweeView pictureItemImg,ImageView deleteImg){
+            DebugUtils.d(TAG,"doForPictureItemView::pictureItemIndex = " + pictureItemIndex);
+            DebugUtils.d(TAG,"doForPictureItemView::mEventPicturePaths.size() = " + mEventPicturePaths.size());
+
+            if(pictureItemIndex < mEventPicturePaths.size()){
+                pictureItemLl.setVisibility(View.VISIBLE);
+
+                setSimpleDraweeViewLocalPath(pictureItemImg,mEventPicturePaths.get(pictureItemIndex));
+
+                if(isDeletePictureMode){
+                    deleteImg.setVisibility(View.VISIBLE);
+                }else{
+                    deleteImg.setVisibility(View.GONE);
+                }
+            }else if(pictureItemIndex == mEventPicturePaths.size()){
+                pictureItemLl.setVisibility(View.VISIBLE);
+
+                setSimpleDraweeViewRes(pictureItemImg,R.mipmap.ic_add_picture);
+
+                deleteImg.setVisibility(View.GONE);
+
+            }else{
+                pictureItemLl.setVisibility(View.INVISIBLE);
+            }
+
+            pictureItemLl.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    DebugUtils.d(TAG,"doForPictureItemView::onClick::pictureItemIndex = " + pictureItemIndex);
+                    DebugUtils.d(TAG,"doForPictureItemView::onClick::mEventPicturePaths.size() = " + mEventPicturePaths.size());
+                    if(pictureItemIndex == mEventPicturePaths.size()){
+                        mAddPictureTipsLl.setVisibility(View.VISIBLE);
+                    }else{
+                        if(isDeletePictureMode){
+                            mEventPicturePaths.remove(pictureItemIndex);
+                            if(mEventPicturePaths.size() == 0){
+                                isDeletePictureMode = false;
+                            }
+                            notifyDataSetChanged();
+                        }
+                    }
+                }
+            });
+
+            pictureItemLl.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+                    if(pictureItemIndex < mEventPicturePaths.size()){
+                        if(isDeletePictureMode){
+                            isDeletePictureMode = false;
+                        }else{
+                            isDeletePictureMode = true;
+                        }
+                        notifyDataSetChanged();
+                    }
+                    return true;
+                }
+            });
+        }
+
+        private void doForPersonItemView(final int mPersonItemIndex, View personItemLl, SimpleDraweeView personItemImg,ImageView deleteImg){
+            DebugUtils.d(TAG,"doForPictureItemView::mPersonItemIndex = " + mPersonItemIndex);
+            DebugUtils.d(TAG,"doForPictureItemView::mEventPersonPaths.size() = " + mEventPersonPaths.size());
+
+            if(mPersonItemIndex < mEventPersonPaths.size()){
+                personItemLl.setVisibility(View.VISIBLE);
+
+                personItemImg.setImageURI(mEventPersonPaths.get(mPersonItemIndex));
+
+                if(isDeletePersonMode){
+                    deleteImg.setVisibility(View.VISIBLE);
+                }else{
+                    deleteImg.setVisibility(View.GONE);
+                }
+            }else if(mPersonItemIndex == mEventPersonPaths.size()){
+                personItemLl.setVisibility(View.VISIBLE);
+
+                setSimpleDraweeViewRes(personItemImg,R.mipmap.ic_add_person);
+
+                deleteImg.setVisibility(View.GONE);
+
+            }else{
+                personItemLl.setVisibility(View.INVISIBLE);
+            }
+
+            personItemLl.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    DebugUtils.d(TAG,"doForPictureItemView::onClick::mPersonItemIndex = " + mPersonItemIndex);
+                    DebugUtils.d(TAG,"doForPictureItemView::onClick::mEventPersonPaths.size() = " + mEventPersonPaths.size());
+                    if(mPersonItemIndex == mEventPersonPaths.size()){
+                        Intent mPersonListIntent = new Intent(mContext,PersonListActivity.class);
+                        startActivityForResult(mPersonListIntent,PersonListActivity.CODE_PERSON_LIST_REQUEST);
+                    }else{
+                        if(isDeletePersonMode){
+                            mEventPersonPaths.remove(mPersonItemIndex);
+                            if(mEventPersonPaths.size() == 0){
+                                isDeletePersonMode = false;
+                            }
+                            notifyDataSetChanged();
+                        }
+                    }
+                }
+            });
+
+            personItemLl.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+                    if(mPersonItemIndex < mEventPersonPaths.size()){
+                        if(isDeletePersonMode){
+                            isDeletePersonMode = false;
+                        }else{
+                            isDeletePersonMode = true;
+                        }
+                        notifyDataSetChanged();
+                    }
+                    return true;
+                }
+            });
+        }
+
         private void setSimpleDraweeViewLocalPath(SimpleDraweeView simpleDraweeViewRes,String path){
-            int mWidth = 60;
-            int mHeight = 60;
+            int mWidth = mPictureWidth;
+            int mHeight = mPictureHeight;
             if(mWidth > 0 && mHeight > 0){
                 Uri mUri = Uri.parse("file://" + path);
                 ImageRequest request = ImageRequestBuilder.newBuilderWithSource(mUri)
@@ -574,8 +636,8 @@ public class UploadEventActivity extends BaseActivity {
         }
 
         private void setSimpleDraweeViewRes(SimpleDraweeView simpleDraweeViewRes,int resId){
-            int mWidth = 60;
-            int mHeight = 60;
+            int mWidth = mPictureWidth;
+            int mHeight = mPictureHeight;
             if(mWidth > 0 && mHeight > 0){
                 Uri mUri = Uri.parse("res://" + mContext.getPackageName() + "/" + resId);
                 ImageRequest request = ImageRequestBuilder.newBuilderWithSource(mUri)

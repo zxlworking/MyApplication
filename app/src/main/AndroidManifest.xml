@@ -32,7 +32,8 @@
         <activity
             android:name="com.zxl.river.chief.activity.LoginActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
-            android:screenOrientation="portrait">
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden|stateAlwaysHidden|adjustResize|adjustPan">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -78,6 +79,30 @@
         <activity
             android:name=".activity.EventDetailActivity"
             android:windowSoftInputMode="stateHidden|stateAlwaysHidden"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".activity.CountActivity"
+            android:windowSoftInputMode="stateHidden|stateAlwaysHidden"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".activity.TrajectoryPlaybackActivity"
+            android:windowSoftInputMode="stateHidden|stateAlwaysHidden"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".activity.ModifyPasswordActivity"
+            android:windowSoftInputMode="stateHidden|stateAlwaysHidden|adjustResize|adjustPan"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".activity.PersonListActivity"
+            android:windowSoftInputMode="stateHidden|stateAlwaysHidden|adjustResize|adjustPan"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".activity.RecordDetailActivity"
+            android:windowSoftInputMode="stateHidden|stateAlwaysHidden|adjustResize|adjustPan"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".activity.DealEventActivity"
+            android:windowSoftInputMode="stateHidden|stateAlwaysHidden|adjustResize|adjustPan"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:screenOrientation="portrait"/>
 
