@@ -18,9 +18,9 @@
             android:id="@+id/person_list_item_img"
             android:layout_width="48dp"
             android:layout_height="48dp"
-            fresco:placeholderImage="@mipmap/ic_launcher"
+            fresco:placeholderImage="@mipmap/ic_default_load"
             fresco:placeholderImageScaleType="fitCenter"
-            fresco:failureImage="@mipmap/ic_launcher"
+            fresco:failureImage="@mipmap/ic_default_load"
             fresco:failureImageScaleType="fitCenter"
             fresco:actualImageScaleType="fitCenter"
             fresco:roundAsCircle="true"/>

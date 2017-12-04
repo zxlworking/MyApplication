@@ -66,9 +66,9 @@
                     android:id="@+id/upload_river_picture_item_img_1"
                     android:layout_width="60dp"
                     android:layout_height="60dp"
-                    fresco:placeholderImage="@mipmap/ic_launcher"
+                    fresco:placeholderImage="@mipmap/ic_default_load"
                     fresco:placeholderImageScaleType="fitCenter"
-                    fresco:failureImage="@mipmap/ic_launcher"
+                    fresco:failureImage="@mipmap/ic_default_load"
                     fresco:failureImageScaleType="fitCenter"
                     fresco:actualImageScaleType="fitCenter"/>
                 <ImageView
@@ -108,9 +108,9 @@
                     android:id="@+id/upload_river_picture_item_img_2"
                     android:layout_width="60dp"
                     android:layout_height="60dp"
-                    fresco:placeholderImage="@mipmap/ic_launcher"
+                    fresco:placeholderImage="@mipmap/ic_default_load"
                     fresco:placeholderImageScaleType="fitCenter"
-                    fresco:failureImage="@mipmap/ic_launcher"
+                    fresco:failureImage="@mipmap/ic_default_load"
                     fresco:failureImageScaleType="fitCenter"
                     fresco:actualImageScaleType="fitCenter"/>
                 <ImageView
@@ -151,9 +151,9 @@
                     android:id="@+id/upload_river_picture_item_img_3"
                     android:layout_width="60dp"
                     android:layout_height="60dp"
-                    fresco:placeholderImage="@mipmap/ic_launcher"
+                    fresco:placeholderImage="@mipmap/ic_default_load"
                     fresco:placeholderImageScaleType="fitCenter"
-                    fresco:failureImage="@mipmap/ic_launcher"
+                    fresco:failureImage="@mipmap/ic_default_load"
                     fresco:failureImageScaleType="fitCenter"
                     fresco:actualImageScaleType="fitCenter"/>
                 <ImageView
@@ -194,9 +194,9 @@
                     android:id="@+id/upload_river_picture_item_img_4"
                     android:layout_width="60dp"
                     android:layout_height="60dp"
-                    fresco:placeholderImage="@mipmap/ic_launcher"
+                    fresco:placeholderImage="@mipmap/ic_default_load"
                     fresco:placeholderImageScaleType="fitCenter"
-                    fresco:failureImage="@mipmap/ic_launcher"
+                    fresco:failureImage="@mipmap/ic_default_load"
                     fresco:failureImageScaleType="fitCenter"
                     fresco:actualImageScaleType="fitCenter"/>
                 <ImageView
