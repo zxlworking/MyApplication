@@ -535,6 +535,8 @@ public class UploadEventActivity extends BaseActivity {
                                 isDeletePictureMode = false;
                             }
                             notifyDataSetChanged();
+                        }else{
+                            showBigImgByLocalFile(mEventPicturePaths.get(pictureItemIndex));
                         }
                     }
                 }

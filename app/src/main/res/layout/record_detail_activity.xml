@@ -10,10 +10,16 @@
         android:layout_height="wrap_content"
         layout="@layout/title_bar"/>
 
-
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/record_detail_recycler_view"
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
-
+        android:layout_height="match_parent">
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/record_detail_recycler_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+        <include
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            layout="@layout/show_big_img_view"/>
+    </FrameLayout>
 </LinearLayout>

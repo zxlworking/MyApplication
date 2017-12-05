@@ -196,6 +196,16 @@ public class RecordDetailActivity extends BaseActivity {
             }else{
                 pictureItemLl.setVisibility(View.INVISIBLE);
             }
+
+            pictureItemLl.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if(pictureItemIndex < mRecordDetailPicturePaths.size()){
+                        showBigImgByRes(mRecordDetailPicturePaths.get(pictureItemIndex));
+
+                    }
+                }
+            });
         }
 
         private void setSimpleDraweeViewLocalPath(SimpleDraweeView simpleDraweeViewRes,String path){

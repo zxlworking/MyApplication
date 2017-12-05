@@ -433,6 +433,8 @@ public class UploadRiverActivity extends BaseActivity {
                                 isDeletePictureMode = false;
                             }
                             notifyDataSetChanged();
+                        }else{
+                            showBigImgByLocalFile(mRiverPicturePaths.get(pictureItemIndex));
                         }
                     }
                 }

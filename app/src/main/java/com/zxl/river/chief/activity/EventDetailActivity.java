@@ -37,7 +37,7 @@ public class EventDetailActivity extends BaseActivity {
     private RecyclerView mEventDetailRecyclerView;
     private EventDetailAdapter mEventDetailAdapter;
 
-    private List<String> mEventPicturePaths = new ArrayList<>();
+    private List<Integer> mEventPicturePaths = new ArrayList<>();
     private List<String> mEventPersonPaths = new ArrayList<>();
 
     private int mPictureWidth = 0;
@@ -83,9 +83,14 @@ public class EventDetailActivity extends BaseActivity {
         mPictureWidth = (CommonUtils.getScreenWidth(mContext) - 8 * 16) / 4;
         mPictureHeight = mPictureWidth;
 
-        for(int i = 0; i < 6; i++){
-            mEventPicturePaths.add("--->"+i);
-        }
+
+        mEventPicturePaths.add(R.drawable.t6);
+        mEventPicturePaths.add(R.drawable.t1);
+        mEventPicturePaths.add(R.drawable.t2);
+        mEventPicturePaths.add(R.drawable.t3);
+        mEventPicturePaths.add(R.drawable.t4);
+        mEventPicturePaths.add(R.drawable.t5);
+
         mEventPersonPaths.add("http://img3.duitang.com/uploads/item/201511/13/20151113110644_PcSFj.thumb.224_0.jpeg");
         mEventDetailAdapter.notifyDataSetChanged();
     }
@@ -175,38 +180,11 @@ public class EventDetailActivity extends BaseActivity {
                     mEventDetailPictureItemTopLl.setVisibility(View.GONE);
                 }
 
-                if(mPictureIndex * 4 < mEventPicturePaths.size()){
-                    mEventDetailPictureItemLl1.setVisibility(View.VISIBLE);
-                    //mEventDetailPictureItemImg1.setImageResource(R.drawable.t1);
+                doForPictureItemView(mPictureIndex * 4,mEventDetailPictureItemLl1,mEventDetailPictureItemImg1);
+                doForPictureItemView(mPictureIndex * 4 + 1,mEventDetailPictureItemLl2,mEventDetailPictureItemImg2);
+                doForPictureItemView(mPictureIndex * 4 + 2,mEventDetailPictureItemLl3,mEventDetailPictureItemImg3);
+                doForPictureItemView(mPictureIndex * 4 + 3,mEventDetailPictureItemLl4,mEventDetailPictureItemImg4);
 
-                    setSimpleDraweeViewRes(mEventDetailPictureItemImg1,R.drawable.t1);
-                }else{
-                    mEventDetailPictureItemLl1.setVisibility(View.INVISIBLE);
-                }
-                if(mPictureIndex * 4 + 1 < mEventPicturePaths.size()){
-                    mEventDetailPictureItemLl2.setVisibility(View.VISIBLE);
-                    //mEventDetailPictureItemImg2.setImageResource(R.drawable.t2);
-
-                    setSimpleDraweeViewRes(mEventDetailPictureItemImg2,R.drawable.t2);
-                }else{
-                    mEventDetailPictureItemLl2.setVisibility(View.INVISIBLE);
-                }
-                if(mPictureIndex * 4 + 2 < mEventPicturePaths.size()){
-                    mEventDetailPictureItemLl3.setVisibility(View.VISIBLE);
-                    //mEventDetailPictureItemImg3.setImageResource(R.drawable.t3);
-
-                    setSimpleDraweeViewRes(mEventDetailPictureItemImg3,R.drawable.t3);
-                }else{
-                    mEventDetailPictureItemLl3.setVisibility(View.INVISIBLE);
-                }
-                if(mPictureIndex * 4 + 3 < mEventPicturePaths.size()){
-                    mEventDetailPictureItemLl4.setVisibility(View.VISIBLE);
-                    //mEventDetailPictureItemImg4.setImageResource(R.drawable.t4);
-
-                    setSimpleDraweeViewRes(mEventDetailPictureItemImg4,R.drawable.t4);
-                }else{
-                    mEventDetailPictureItemLl4.setVisibility(View.INVISIBLE);
-                }
             }else if(holder instanceof PersonItemViewHolder){
                 SimpleDraweeView mEventDetailPersonItemImg = (SimpleDraweeView) holder.findViewById(R.id.event_detail_person_item_img);
                 int mPictureItemCount = mEventPicturePaths.size() / 4 + (mEventPicturePaths.size() % 4 != 0 ? 1 : 0);
@@ -222,6 +200,30 @@ public class EventDetailActivity extends BaseActivity {
                     }
                 });
             }
+        }
+
+        private void doForPictureItemView(final int pictureItemIndex, View pictureItemLl, SimpleDraweeView pictureItemImg){
+            DebugUtils.d(TAG,"doForPictureItemView::pictureItemIndex = " + pictureItemIndex);
+            DebugUtils.d(TAG,"doForPictureItemView::mEventPicturePaths.size() = " + mEventPicturePaths.size());
+
+            if(pictureItemIndex < mEventPicturePaths.size()){
+                pictureItemLl.setVisibility(View.VISIBLE);
+
+                setSimpleDraweeViewRes(pictureItemImg,mEventPicturePaths.get(pictureItemIndex));
+
+            }else{
+                pictureItemLl.setVisibility(View.INVISIBLE);
+            }
+
+            pictureItemLl.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if(pictureItemIndex < mEventPicturePaths.size()){
+                        showBigImgByRes(mEventPicturePaths.get(pictureItemIndex));
+
+                    }
+                }
+            });
         }
 
         private void setSimpleDraweeViewRes(SimpleDraweeView simpleDraweeViewRes,int resId){
